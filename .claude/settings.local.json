@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 30 bash -c 'echo -e \"\"N\\nY\"\" | npx create-next-app@15 . --typescript --tailwind --eslint --app')",
+      "Bash(true)",
+      "Bash(npm install)",
+      "Bash(mkdir:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": []
+  }
+}
