@@ -34,8 +34,6 @@ export default function HomePage() {
   }, [])
 
   const loadStations = async () => {
-    if (!supabase) return
-    
     try {
       const { data, error } = await supabase
         .from('stations')

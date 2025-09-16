@@ -21,8 +21,6 @@ export default function AdminPage() {
   }, [])
 
   const loadStations = async () => {
-    if (!supabase) return
-    
     try {
       const { data, error } = await supabase
         .from('stations')
@@ -38,7 +36,7 @@ export default function AdminPage() {
   }
 
   const handleSaveStation = async () => {
-    if (!editingStation || !supabase) return
+    if (!editingStation) return
 
     setLoading(true)
     setError('')
@@ -73,7 +71,7 @@ export default function AdminPage() {
   }
 
   const handleDeleteStation = async (stationId: string) => {
-    if (!confirm('Are you sure you want to delete this station?') || !supabase) return
+    if (!confirm('Are you sure you want to delete this station?')) return
 
     setLoading(true)
     try {
