@@ -2,7 +2,7 @@
 
 A spy-themed Next.js application that enables teams to follow different paths through a scavenger hunt using QR codes and team-specific passwords.
 
-<!-- Force redeploy to refresh environment variables -->
+<!-- Force redeploy to refresh environment variables - attempt 3 -->
 
 ## Features
 
