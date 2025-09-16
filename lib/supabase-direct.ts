@@ -27,7 +27,7 @@ export async function createStation(station: any) {
       'apikey': supabaseKey,
       'Authorization': `Bearer ${supabaseKey}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
+      'Prefer': 'return=representation'
     },
     body: JSON.stringify(station)
   })
@@ -36,7 +36,8 @@ export async function createStation(station: any) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`)
   }
   
-  return response.json()
+  const text = await response.text()
+  return text ? JSON.parse(text) : {}
 }
 
 export async function updateStation(id: string, station: any) {
@@ -46,7 +47,7 @@ export async function updateStation(id: string, station: any) {
       'apikey': supabaseKey,
       'Authorization': `Bearer ${supabaseKey}`,
       'Content-Type': 'application/json',
-      'Prefer': 'return=minimal'
+      'Prefer': 'return=representation'
     },
     body: JSON.stringify(station)
   })
@@ -55,7 +56,8 @@ export async function updateStation(id: string, station: any) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`)
   }
   
-  return response.json()
+  const text = await response.text()
+  return text ? JSON.parse(text) : {}
 }
 
 export async function deleteStation(id: string) {
@@ -72,5 +74,6 @@ export async function deleteStation(id: string) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`)
   }
   
-  return response.json()
+  const text = await response.text()
+  return text ? JSON.parse(text) : {}
 }
