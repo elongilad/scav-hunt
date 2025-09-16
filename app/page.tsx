@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getStations } from '@/lib/supabase-direct'
 import { Station, StationRoute } from '@/types'
 import QRScanner from '@/components/QRScanner'
 import VideoPlayer from '@/components/VideoPlayer'
@@ -35,13 +35,9 @@ export default function HomePage() {
 
   const loadStations = async () => {
     try {
-      const { data, error } = await supabase
-        .from('stations')
-        .select('*')
+      const data = await getStations()
       
-      if (error) throw error
-      
-      const stationsMap = data.reduce((acc, station) => {
+      const stationsMap = data.reduce((acc: Record<string, Station>, station: Station) => {
         acc[station.id] = station
         return acc
       }, {})

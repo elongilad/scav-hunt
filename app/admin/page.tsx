@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { getStations, createStation, updateStation, deleteStation } from '@/lib/supabase-direct'
 import { Station, StationRoute } from '@/types'
 import { Plus, Edit, Trash2, QrCode, Save, X } from 'lucide-react'
 import QRCode from 'qrcode'
@@ -22,12 +22,7 @@ export default function AdminPage() {
 
   const loadStations = async () => {
     try {
-      const { data, error } = await supabase
-        .from('stations')
-        .select('*')
-        .order('created_at', { ascending: true })
-      
-      if (error) throw error
+      const data = await getStations()
       setStations(data || [])
     } catch (error) {
       console.error('Error loading stations:', error)
@@ -49,17 +44,10 @@ export default function AdminPage() {
       }
 
       if (editingStation.isNew) {
-        const { error } = await supabase
-          .from('stations')
-          .insert([stationData])
+        await createStation(stationData)
       } else {
-        const { error } = await supabase
-          .from('stations')
-          .update(stationData)
-          .eq('id', editingStation.id)
+        await updateStation(editingStation.id, stationData)
       }
-
-      if (error) throw error
 
       await loadStations()
       setEditingStation(null)
@@ -75,12 +63,7 @@ export default function AdminPage() {
 
     setLoading(true)
     try {
-      const { error } = await supabase
-        .from('stations')
-        .delete()
-        .eq('id', stationId)
-
-      if (error) throw error
+      await deleteStation(stationId)
       await loadStations()
     } catch (error: any) {
       setError(error.message || 'Failed to delete station')
