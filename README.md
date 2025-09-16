@@ -2,6 +2,8 @@
 
 A spy-themed Next.js application that enables teams to follow different paths through a scavenger hunt using QR codes and team-specific passwords.
 
+<!-- Force redeploy to refresh environment variables -->
+
 ## Features
 
 - **QR Code Scanning**: Teams scan QR codes at physical locations to receive mission briefings
