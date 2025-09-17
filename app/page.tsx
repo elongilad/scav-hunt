@@ -24,14 +24,23 @@ export default function HomePage() {
 
   useEffect(() => {
     loadStations()
-    
-    // Check for station parameter in URL
+  }, [])
+
+  // Separate effect to handle URL parameter after stations are loaded
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
-    const stationId = urlParams.get('station')
-    if (stationId) {
+    let stationId = urlParams.get('station')
+    console.log('URL station parameter:', stationId)
+    console.log('Full URL:', window.location.href)
+    
+    if (stationId && Object.keys(stations).length > 0) {
+      // Clean up the station ID (remove extra spaces, decode if needed)
+      stationId = decodeURIComponent(stationId.trim())
+      console.log('Cleaned station ID:', stationId)
+      console.log('Attempting to load station from URL:', stationId)
       loadStation(stationId)
     }
-  }, [])
+  }, [stations]) // This runs when stations are loaded
 
   const loadStations = async () => {
     try {
@@ -50,14 +59,32 @@ export default function HomePage() {
   }
 
   const loadStation = (stationId: string) => {
-    const station = stations[stationId]
+    console.log('Looking for station:', stationId)
+    console.log('Available stations:', Object.keys(stations))
+    
+    // Try exact match first
+    let station = stations[stationId]
+    
+    // If not found, try case-insensitive search
+    if (!station) {
+      const stationKey = Object.keys(stations).find(key => 
+        key.toLowerCase() === stationId.toLowerCase()
+      )
+      if (stationKey) {
+        station = stations[stationKey]
+        console.log('Found station with case-insensitive match:', stationKey)
+      }
+    }
+    
     if (station) {
       setCurrentStation(station)
       setError('')
       setPassword('')
       setMatchingRoute(null)
       setShowVideo(false)
+      console.log('Station loaded successfully:', station)
     } else {
+      console.error('Station not found. Available:', Object.keys(stations), 'Requested:', stationId)
       setError(t('station.not.found'))
     }
   }
