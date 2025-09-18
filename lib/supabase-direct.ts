@@ -142,3 +142,34 @@ export async function clearAllTeamVisits() {
   
   return response.ok
 }
+
+export async function toggleTeamVisit(teamPassword: string, stationId: string) {
+  try {
+    // First check if this visit already exists
+    const visits = await getTeamVisits()
+    const existingVisit = visits.find((visit: any) => 
+      visit.team_password === teamPassword && 
+      visit.station_id === stationId && 
+      visit.success === true
+    )
+
+    if (existingVisit) {
+      // Delete the existing visit
+      const response = await fetch(`${supabaseUrl}/rest/v1/team_visits?id=eq.${existingVisit.id}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      return response.ok
+    } else {
+      // Create a new visit
+      return await logTeamVisit(teamPassword, stationId, true)
+    }
+  } catch (error) {
+    console.error('Error toggling team visit:', error)
+    return false
+  }
+}
