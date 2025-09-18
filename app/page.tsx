@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getStations } from '@/lib/supabase-direct'
+import { getStations, logTeamVisit } from '@/lib/supabase-direct'
 import { Station, StationRoute } from '@/types'
 import QRScanner from '@/components/QRScanner'
 import VideoPlayer from '@/components/VideoPlayer'
@@ -109,6 +109,11 @@ export default function HomePage() {
       if (matchingRoute) {
         setMatchingRoute(matchingRoute)
         setShowVideo(true)
+        
+        // Log successful team visit
+        await logTeamVisit(password, currentStation.id, true)
+        console.log('Logged team visit:', password, currentStation.id)
+        
         setPassword('')
         
         // Load next station data if available
@@ -116,6 +121,9 @@ export default function HomePage() {
           // Pre-load next station for smoother experience
         }
       } else {
+        // Log failed attempt
+        await logTeamVisit(password, currentStation.id, false)
+        console.log('Logged failed attempt:', password, currentStation.id)
         setError(t('invalid.password'))
       }
     } catch (error) {

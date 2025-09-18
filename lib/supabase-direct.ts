@@ -77,3 +77,43 @@ export async function deleteStation(id: string) {
   const text = await response.text()
   return text ? JSON.parse(text) : {}
 }
+
+export async function logTeamVisit(teamPassword: string, stationId: string, success: boolean = true) {
+  const response = await fetch(`${supabaseUrl}/rest/v1/team_visits`, {
+    method: 'POST',
+    headers: {
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify({
+      team_password: teamPassword,
+      station_id: stationId,
+      success: success,
+      timestamp: new Date().toISOString()
+    })
+  })
+  
+  if (!response.ok) {
+    console.error('Failed to log team visit:', response.status, response.statusText)
+  }
+  
+  return response.ok
+}
+
+export async function getTeamVisits() {
+  const response = await fetch(`${supabaseUrl}/rest/v1/team_visits?select=*&order=timestamp.desc`, {
+    headers: {
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  }
+  
+  return response.json()
+}

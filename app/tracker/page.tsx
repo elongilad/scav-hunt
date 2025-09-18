@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { RotateCcw, Users, MapPin } from 'lucide-react'
+import { getTeamVisits } from '@/lib/supabase-direct'
+import { RotateCcw, Users, MapPin, RefreshCw } from 'lucide-react'
 
 // Team sequences
 const TEAM_SEQUENCES = {
@@ -31,81 +31,96 @@ interface TeamProgress {
   }
 }
 
+interface TeamVisit {
+  id: number
+  team_password: string
+  station_id: string
+  timestamp: string
+  success: boolean
+}
+
 export default function TrackerPage() {
   const [teamProgress, setTeamProgress] = useState<TeamProgress>({})
   const [loading, setLoading] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState<string>('')
 
   useEffect(() => {
-    // Initialize team progress
-    const initialProgress: TeamProgress = {}
-    Object.keys(TEAM_SEQUENCES).forEach(team => {
-      initialProgress[team] = {}
-      TEAM_SEQUENCES[team as keyof typeof TEAM_SEQUENCES].forEach(station => {
-        initialProgress[team][station] = { visited: false }
-      })
-    })
-    setTeamProgress(initialProgress)
-
-    // Load existing progress from localStorage
-    const savedProgress = localStorage.getItem('teamProgress')
-    if (savedProgress) {
-      try {
-        setTeamProgress(JSON.parse(savedProgress))
-      } catch (error) {
-        console.error('Error loading saved progress:', error)
-      }
-    }
-
-    // Set up real-time listener for station visits
-    setupRealtimeListener()
+    loadTeamProgress()
+    
+    // Auto-refresh every 10 seconds
+    const interval = setInterval(loadTeamProgress, 10000)
+    return () => clearInterval(interval)
   }, [])
 
-  const setupRealtimeListener = () => {
-    // Listen for changes in stations table to detect when teams enter passwords
-    const subscription = supabase
-      .channel('station-visits')
-      .on('postgres_changes', 
-        { event: '*', schema: 'public', table: 'stations' }, 
-        (payload) => {
-          console.log('Station activity detected:', payload)
-          // This would need a more sophisticated tracking system
-          // For now, we'll rely on manual updates or polling
-        }
-      )
-      .subscribe()
-
-    return () => {
-      subscription.unsubscribe()
-    }
-  }
-
-  const markStationVisited = (teamName: string, stationId: string) => {
-    const updatedProgress = {
-      ...teamProgress,
-      [teamName]: {
-        ...teamProgress[teamName],
-        [stationId]: {
-          visited: true,
-          timestamp: new Date().toISOString()
-        }
-      }
-    }
-    setTeamProgress(updatedProgress)
-    localStorage.setItem('teamProgress', JSON.stringify(updatedProgress))
-  }
-
-  const resetAllProgress = () => {
-    if (!confirm('Are you sure you want to reset all team progress?')) return
-    
-    const resetProgress: TeamProgress = {}
-    Object.keys(TEAM_SEQUENCES).forEach(team => {
-      resetProgress[team] = {}
-      TEAM_SEQUENCES[team as keyof typeof TEAM_SEQUENCES].forEach(station => {
-        resetProgress[team][station] = { visited: false }
+  const loadTeamProgress = async () => {
+    setLoading(true)
+    try {
+      // Initialize empty progress
+      const progress: TeamProgress = {}
+      Object.keys(TEAM_SEQUENCES).forEach(team => {
+        progress[team] = {}
+        TEAM_SEQUENCES[team as keyof typeof TEAM_SEQUENCES].forEach(station => {
+          progress[team][station] = { visited: false }
+        })
       })
-    })
-    setTeamProgress(resetProgress)
-    localStorage.removeItem('teamProgress')
+
+      // Load visits from database
+      const visits: TeamVisit[] = await getTeamVisits()
+      
+      // Process successful visits only
+      visits.filter(visit => visit.success).forEach(visit => {
+        const teamName = getTeamNameFromPassword(visit.team_password)
+        if (teamName && progress[teamName] && progress[teamName][visit.station_id]) {
+          progress[teamName][visit.station_id] = {
+            visited: true,
+            timestamp: visit.timestamp
+          }
+        }
+      })
+
+      setTeamProgress(progress)
+      setLastUpdate(new Date().toLocaleTimeString())
+    } catch (error) {
+      console.error('Error loading team progress:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getTeamNameFromPassword = (password: string): string | null => {
+    const passwordMap: { [key: string]: string } = {
+      '1111': 'Team 1',
+      '2222': 'Team 2', 
+      '3333': 'Team 3',
+      '4444': 'Team 4',
+      '5555': 'Team 5'
+    }
+    return passwordMap[password] || null
+  }
+
+  const resetAllProgress = async () => {
+    if (!confirm('Are you sure you want to reset all team progress? This will clear the tracking database.')) return
+    
+    setLoading(true)
+    try {
+      // Clear the team_visits table
+      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/team_visits`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+          'Content-Type': 'application/json'
+        }
+      })
+      
+      if (response.ok) {
+        await loadTeamProgress() // Reload to show empty state
+      }
+    } catch (error) {
+      console.error('Error resetting progress:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const getStationStatus = (teamName: string, stationId: string) => {
@@ -139,15 +154,27 @@ export default function TrackerPage() {
               <Users className="w-8 h-8" />
               Team Progress Tracker
             </h1>
-            <p className="text-gray-600 mt-2">Real-time tracking of team progress through stations</p>
+            <p className="text-gray-600 mt-2">Automatic tracking when teams enter passwords</p>
+            <p className="text-sm text-gray-500">Last updated: {lastUpdate} {loading && '(Refreshing...)'}</p>
           </div>
-          <button
-            onClick={resetAllProgress}
-            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
-          >
-            <RotateCcw className="w-5 h-5" />
-            Reset All Progress
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={loadTeamProgress}
+              disabled={loading}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <button
+              onClick={resetAllProgress}
+              disabled={loading}
+              className="bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition-colors"
+            >
+              <RotateCcw className="w-5 h-5" />
+              Reset All
+            </button>
+          </div>
         </div>
 
         {/* Teams Grid */}
@@ -163,18 +190,10 @@ export default function TrackerPage() {
                     Progress: {getTeamProgress(teamName)}
                   </p>
                 </div>
-                <button
-                  onClick={() => {
-                    const nextStation = TEAM_SEQUENCES[teamName as keyof typeof TEAM_SEQUENCES]
-                      .find(station => !getStationStatus(teamName, station))
-                    if (nextStation) {
-                      markStationVisited(teamName, nextStation)
-                    }
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
-                >
-                  Mark Next Complete
-                </button>
+                <div className="text-sm text-gray-600">
+                  Next: {TEAM_SEQUENCES[teamName as keyof typeof TEAM_SEQUENCES]
+                    .find(station => !getStationStatus(teamName, station)) || 'Complete!'}
+                </div>
               </div>
 
               {/* Station Sequence */}
@@ -187,13 +206,12 @@ export default function TrackerPage() {
                     <div
                       key={`${teamName}-${stationId}`}
                       className={`
-                        relative p-3 rounded-lg text-center cursor-pointer transition-all duration-200 border-2
+                        relative p-3 rounded-lg text-center transition-all duration-200 border-2
                         ${isVisited 
                           ? 'bg-green-500 text-white border-green-600 shadow-lg' 
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
+                          : 'bg-white text-gray-700 border-gray-300'
                         }
                       `}
-                      onClick={() => markStationVisited(teamName, stationId)}
                       title={`${stationId}${timestamp ? ` - ${new Date(timestamp).toLocaleTimeString()}` : ''}`}
                     >
                       <div className="text-xs font-medium">{index + 1}</div>
