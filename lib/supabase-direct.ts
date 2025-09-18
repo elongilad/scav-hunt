@@ -119,7 +119,15 @@ export async function getTeamVisits() {
 }
 
 export async function clearAllTeamVisits() {
-  const response = await fetch(`${supabaseUrl}/rest/v1/team_visits`, {
+  // First, get all IDs to delete
+  const allVisits = await getTeamVisits()
+  
+  if (allVisits.length === 0) {
+    return true // Nothing to delete
+  }
+  
+  // Delete all records using a filter that matches all IDs
+  const response = await fetch(`${supabaseUrl}/rest/v1/team_visits?id=gte.0`, {
     method: 'DELETE',
     headers: {
       'apikey': supabaseKey,
