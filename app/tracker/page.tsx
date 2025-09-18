@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { getTeamVisits } from '@/lib/supabase-direct'
+import { getTeamVisits, clearAllTeamVisits } from '@/lib/supabase-direct'
 import { RotateCcw, Users, MapPin, RefreshCw } from 'lucide-react'
 
 // Team sequences
@@ -47,8 +47,8 @@ export default function TrackerPage() {
   useEffect(() => {
     loadTeamProgress()
     
-    // Auto-refresh every 10 seconds
-    const interval = setInterval(loadTeamProgress, 10000)
+    // Auto-refresh every minute (60 seconds)
+    const interval = setInterval(loadTeamProgress, 60000)
     return () => clearInterval(interval)
   }, [])
 
@@ -103,21 +103,16 @@ export default function TrackerPage() {
     
     setLoading(true)
     try {
-      // Clear the team_visits table
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/team_visits`, {
-        method: 'DELETE',
-        headers: {
-          'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      if (response.ok) {
+      const success = await clearAllTeamVisits()
+      if (success) {
         await loadTeamProgress() // Reload to show empty state
+        alert('All team progress has been reset!')
+      } else {
+        alert('Failed to reset progress. Please try again.')
       }
     } catch (error) {
       console.error('Error resetting progress:', error)
+      alert('Error resetting progress. Please check console for details.')
     } finally {
       setLoading(false)
     }
@@ -154,7 +149,7 @@ export default function TrackerPage() {
               <Users className="w-8 h-8" />
               Team Progress Tracker
             </h1>
-            <p className="text-gray-600 mt-2">Automatic tracking when teams enter passwords</p>
+            <p className="text-gray-600 mt-2">Automatic tracking when teams enter passwords • Refreshes every minute</p>
             <p className="text-sm text-gray-500">Last updated: {lastUpdate} {loading && '(Refreshing...)'}</p>
           </div>
           <div className="flex gap-3">

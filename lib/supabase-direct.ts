@@ -117,3 +117,20 @@ export async function getTeamVisits() {
   
   return response.json()
 }
+
+export async function clearAllTeamVisits() {
+  const response = await fetch(`${supabaseUrl}/rest/v1/team_visits`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json'
+    }
+  })
+  
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+  }
+  
+  return response.ok
+}
