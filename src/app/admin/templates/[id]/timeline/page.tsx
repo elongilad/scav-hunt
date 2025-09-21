@@ -11,11 +11,11 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
-import { 
-  ArrowLeft, 
-  Save, 
-  Plus, 
-  Video, 
+import {
+  ArrowLeft,
+  Save,
+  Plus,
+  Video,
   Type,
   Image,
   Play,
@@ -24,7 +24,8 @@ import {
   Move3D,
   Layers,
   Clock,
-  Eye
+  Eye,
+  Settings
 } from 'lucide-react'
 import Link from 'next/link'
 
