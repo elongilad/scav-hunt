@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { PRICING_PLANS, formatPrice } from '@/lib/stripe'
 import BillingClient from './BillingClient'
-import { 
+import {
   CreditCard,
   Crown,
   Check,
@@ -14,7 +14,7 @@ import {
   Calendar,
   Receipt,
   Settings,
-  Upgrade
+  ArrowUp
 } from 'lucide-react'
 
 export default async function BillingPage() {
@@ -98,7 +98,7 @@ export default async function BillingPage() {
         <div className="flex gap-3">
           <Link href="/dashboard/billing/plans">
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-              <Upgrade className="w-4 h-4 mr-2" />
+              <ArrowUp className="w-4 h-4 mr-2" />
               שדרג תכנית
             </Button>
           </Link>
