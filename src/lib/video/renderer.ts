@@ -337,7 +337,7 @@ export class VideoRenderer {
   /**
    * Load video template data
    */
-  private async loadVideoTemplate(templateId: string): Promise<any> {
+  private async loadVideoTemplate(templateId: string): Promise<unknown> {
     try {
       const { data: template, error } = await this.supabase
         .from('media_assets')
@@ -384,7 +384,7 @@ export class VideoRenderer {
     errorMessage?: string
   ): Promise<void> {
     try {
-      const updates: any = {
+      const updates: Record<string, unknown> = {
         status,
         progress,
         updated_at: new Date().toISOString()

@@ -10,7 +10,7 @@ import path from 'path'
 import fs from 'fs/promises'
 import { createClient } from '@supabase/supabase-js'
 
-const execAsync = promisify(exec)
+// const execAsync = promisify(exec) // Currently unused
 
 interface WorkerConfig {
   supabaseUrl: string
@@ -82,7 +82,7 @@ export class VideoRenderingWorker {
   /**
    * Process a single render job
    */
-  private async processJob(job: any): Promise<void> {
+  private async processJob(job: Record<string, unknown>): Promise<void> {
     const jobId = job.id
     console.log(`Processing job ${jobId}`)
 
@@ -123,7 +123,7 @@ export class VideoRenderingWorker {
   /**
    * Download all files needed for the job
    */
-  private async downloadJobFiles(job: any, workspaceDir: string): Promise<void> {
+  private async downloadJobFiles(job: Record<string, unknown>, workspaceDir: string): Promise<void> {
     const downloads: Promise<void>[] = []
 
     // Download video template
@@ -141,7 +141,7 @@ export class VideoRenderingWorker {
 
     // Download user clips
     if (job.user_clips && Array.isArray(job.user_clips)) {
-      job.user_clips.forEach((clip: any, index: number) => {
+      job.user_clips.forEach((clip: Record<string, unknown>, index: number) => {
         downloads.push(this.downloadFile(clip.file_path, path.join(workspaceDir, `clip_${index}.mp4`)))
       })
     }
@@ -171,7 +171,7 @@ export class VideoRenderingWorker {
   /**
    * Generate FFmpeg command for the job
    */
-  private async generateFFmpegCommand(job: any, workspaceDir: string): Promise<string> {
+  private async generateFFmpegCommand(job: Record<string, unknown>, workspaceDir: string): Promise<string> {
     // Load video scenes
     const { data: scenes } = await this.supabase
       .from('video_template_scenes')
@@ -198,7 +198,7 @@ export class VideoRenderingWorker {
 
     // Add user clip inputs
     if (job.user_clips && Array.isArray(job.user_clips)) {
-      job.user_clips.forEach((_: any, index: number) => {
+      job.user_clips.forEach((_: Record<string, unknown>, index: number) => {
         command.push(`-i "${path.join(workspaceDir, `clip_${index}.mp4`)}"`)
       })
     }
@@ -227,7 +227,7 @@ export class VideoRenderingWorker {
   /**
    * Build FFmpeg filter complex for video composition
    */
-  private buildFilterComplex(scenes: any[], userClips: any[], workspaceDir: string): string {
+  private buildFilterComplex(scenes: unknown[], userClips: unknown[], _workspaceDir: string): string {
     const filters: string[] = []
     const videoInputs: string[] = []
     const audioInputs: string[] = []
@@ -371,8 +371,8 @@ export class VideoRenderingWorker {
       const storagePath = `renders/${jobId}/${fileName}`
       
       const fileBuffer = await fs.readFile(localPath)
-      
-      const { data, error } = await this.supabase.storage
+
+      const { error } = await this.supabase.storage
         .from('user-uploads')
         .upload(storagePath, fileBuffer, {
           contentType: 'video/mp4',
@@ -399,7 +399,7 @@ export class VideoRenderingWorker {
     errorMessage?: string
   ): Promise<void> {
     try {
-      const updates: any = {
+      const updates: Record<string, unknown> = {
         status,
         progress,
         updated_at: new Date().toISOString()
