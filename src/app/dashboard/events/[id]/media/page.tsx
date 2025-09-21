@@ -174,16 +174,14 @@ export default function EventMediaPage({ params }: PageProps) {
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('user-uploads')
-          .upload(filePath, mediaFile.file, {
-            onUploadProgress: (progress) => {
-              const percent = (progress.loaded / progress.total) * 100
-              setUploadQueue(prev => 
-                prev.map(f => f.id === mediaFile.id ? { ...f, progress: percent } : f)
-              )
-            }
-          })
+          .upload(filePath, mediaFile.file)
 
         if (uploadError) throw uploadError
+
+        // Set upload progress to 100% after successful upload
+        setUploadQueue(prev =>
+          prev.map(f => f.id === mediaFile.id ? { ...f, progress: 100 } : f)
+        )
 
         // Create media record in database
         const { data: mediaRecord, error: dbError } = await supabase

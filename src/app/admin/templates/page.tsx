@@ -212,7 +212,7 @@ export default async function VideoTemplatesPage() {
                 <CardContent className="space-y-4">
                   {/* Video Preview Area */}
                   <div className="aspect-video bg-black/50 rounded-lg flex items-center justify-center border border-white/10">
-                    {template.embed_url ? (
+                    {(template as any).embed_url ? (
                       <div className="text-center">
                         <Video className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                         <p className="text-xs text-gray-400">תצוגה מקדימה של וידאו</p>
@@ -270,7 +270,7 @@ export default async function VideoTemplatesPage() {
                       </Button>
                     </Link>
                     
-                    {template.embed_url && (
+                    {(template as any).embed_url && (
                       <Link href={`/admin/templates/${template.id}/preview`}>
                         <Button size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                           <Eye className="w-4 h-4" />

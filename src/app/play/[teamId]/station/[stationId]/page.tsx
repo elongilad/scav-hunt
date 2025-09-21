@@ -281,14 +281,12 @@ export default function StationPage({ params }: PageProps) {
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('user-uploads')
-        .upload(filePath, recordedVideo, {
-          onUploadProgress: (progress) => {
-            const percent = (progress.loaded / progress.total) * 100
-            setUploadProgress(percent)
-          }
-        })
+        .upload(filePath, recordedVideo)
 
       if (uploadError) throw uploadError
+
+      // Set upload progress to 100% after successful upload
+      setUploadProgress(100)
 
       // Complete the station
       const response = await fetch('/api/routing', {

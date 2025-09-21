@@ -164,12 +164,7 @@ export default function EventSetupPage({ params }: PageProps) {
 
         const { error: uploadError } = await supabase.storage
           .from('user-uploads')
-          .upload(filePath, file, {
-            onUploadProgress: (progress) => {
-              const percent = (progress.loaded / progress.total) * 100
-              setUploadProgress(prev => ({ ...prev, [`${stationId}-${i}`]: percent }))
-            }
-          })
+          .upload(filePath, file)
 
         if (uploadError) throw uploadError
 
