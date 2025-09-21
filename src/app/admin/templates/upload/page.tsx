@@ -109,14 +109,12 @@ export default function UploadVideoPage() {
       // Upload file to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('user-uploads')
-        .upload(filePath, uploadState.file, {
-          onUploadProgress: (progress) => {
-            const percent = (progress.loaded / progress.total) * 100
-            setUploadState(prev => ({ ...prev, progress: percent }))
-          }
-        })
+        .upload(filePath, uploadState.file)
 
       if (uploadError) throw uploadError
+
+      // Update progress to 100% after successful upload
+      setUploadState(prev => ({ ...prev, progress: 100 }))
 
       // Extract video metadata (duration, resolution, etc.)
       const videoElement = document.createElement('video')
