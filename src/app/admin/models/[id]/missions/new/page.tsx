@@ -123,7 +123,7 @@ export default function NewMissionPage({ params }: PageProps) {
         .in('org_id', orgs.map(org => org.org_id))
         .order('created_at', { ascending: false })
 
-      setVideoTemplates(templates || [])
+      setVideoTemplates(templates as any || [])
     } catch (error) {
       console.error('Error loading video templates:', error)
     }
