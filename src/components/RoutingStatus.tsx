@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -70,9 +70,9 @@ export default function RoutingStatus({
       const interval = setInterval(fetchTeamProgress, 30000)
       return () => clearInterval(interval)
     }
-  }, [teamId])
+  }, [teamId, fetchTeamProgress])
 
-  const fetchTeamProgress = async () => {
+  const fetchTeamProgress = useCallback(async () => {
     try {
       setError(null)
       const response = await fetch(`/api/routing?action=team-progress&teamId=${teamId}`)
@@ -84,12 +84,12 @@ export default function RoutingStatus({
 
       setTeamData(data.progress)
       setLastUpdate(new Date())
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
     }
-  }
+  }, [teamId])
 
   const getNextStation = async () => {
     try {

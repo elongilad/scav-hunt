@@ -1,6 +1,6 @@
 import { requireAuth, getUserOrgs } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -84,7 +84,7 @@ export default async function LiveEventPage({ params }: PageProps) {
   const { data: stations } = await supabase
     .from('model_stations')
     .select('*')
-    .eq('model_id', (event as any).hunt_models.id)
+    .eq('model_id', (event as Record<string, any>)?.hunt_models?.id)
     .order('station_id')
 
   // Calculate event statistics

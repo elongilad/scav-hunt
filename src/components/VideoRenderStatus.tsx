@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -59,9 +59,9 @@ export default function VideoRenderStatus({
 
       return () => clearInterval(interval)
     }
-  }, [jobId, eventId])
+  }, [jobId, eventId]) // fetchStatus and jobs are handled separately
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       setError(null)
       const params = new URLSearchParams()
@@ -85,12 +85,12 @@ export default function VideoRenderStatus({
       } else {
         setJobs(data.jobs || [])
       }
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     } finally {
       setLoading(false)
     }
-  }
+  }, [jobId, eventId])
 
   const cancelJob = async (jobId: string) => {
     try {
@@ -105,8 +105,8 @@ export default function VideoRenderStatus({
 
       // Refresh status
       fetchStatus()
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred')
     }
   }
 
@@ -117,7 +117,7 @@ export default function VideoRenderStatus({
       link.href = `/api/download?path=${encodeURIComponent(outputPath)}`
       link.download = `hunt_video_${jobId}.mp4`
       link.click()
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError('Failed to download video')
     }
   }
