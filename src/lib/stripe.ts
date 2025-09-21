@@ -156,9 +156,9 @@ export function formatPrice(amount: number, currency: string = 'ILS'): string {
 }
 
 export function getPlanByStripeId(stripePriceId: string) {
-  return Object.values(PRICING_PLANS).find(plan => plan.stripePriceId === stripePriceId)
+  return Object.values(PRICING_PLANS).find(plan => (plan as any).stripePriceId === stripePriceId)
 }
 
 export function getEventPricingByStripeId(stripePriceId: string) {
-  return Object.values(EVENT_PRICING).find(pricing => pricing.stripePriceId === stripePriceId)
+  return Object.values(EVENT_PRICING).find(pricing => (pricing as any).stripePriceId === stripePriceId)
 }

@@ -45,13 +45,13 @@ export async function POST(request: NextRequest) {
     // Handle subscription plans
     if (planId && planId !== 'free') {
       const plan = PRICING_PLANS[planId as PricingPlan]
-      if (!plan || !plan.stripePriceId) {
+      if (!plan || !(plan as any).stripePriceId) {
         return NextResponse.json({ error: 'תכנית לא תקינה' }, { status: 400 })
       }
 
       mode = 'subscription'
       lineItems = [{
-        price: plan.stripePriceId,
+        price: (plan as any).stripePriceId,
         quantity: 1
       }]
       metadata.planId = planId
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     // Handle per-event pricing
     if (eventPricingId && eventId) {
       const eventPricing = EVENT_PRICING[eventPricingId as EventPricing]
-      if (!eventPricing || !eventPricing.stripePriceId) {
+      if (!eventPricing || !(eventPricing as any).stripePriceId) {
         return NextResponse.json({ error: 'תמחור אירוע לא תקין' }, { status: 400 })
       }
 
@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
       }
 
       lineItems = [{
-        price: eventPricing.stripePriceId,
+        price: (eventPricing as any).stripePriceId,
         quantity: 1
       }]
       metadata.eventId = eventId
