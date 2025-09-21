@@ -104,7 +104,7 @@ export default function EventExportPage() {
 
       if (eventError) throw eventError
 
-      setEvent(eventData)
+      setEvent(eventData as any)
     } catch (err: any) {
       setError('שגיאה בטעינת נתוני האירוע')
     } finally {
