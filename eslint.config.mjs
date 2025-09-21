@@ -20,6 +20,19 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-empty-object-type": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "react/no-unescaped-entities": "warn",
+      "react/jsx-no-undef": "warn",
+      "jsx-a11y/alt-text": "warn",
+      "@next/next/no-page-custom-font": "warn",
+      "prefer-const": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;

@@ -177,7 +177,9 @@ export default function TimelineEditorPage({ params }: PageProps) {
     const targetIndex = direction === 'up' ? index - 1 : index + 1
     
     // Swap scenes
-    [newScenes[index], newScenes[targetIndex]] = [newScenes[targetIndex], newScenes[index]]
+    const temp = newScenes[index]
+    newScenes[index] = newScenes[targetIndex]
+    newScenes[targetIndex] = temp
     
     // Update order indices
     newScenes.forEach((scene, i) => {
