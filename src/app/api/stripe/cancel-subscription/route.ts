@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ 
       success: true,
-      cancelDate: new Date(canceledSubscription.current_period_end * 1000)
+      cancelDate: new Date((canceledSubscription as any).current_period_end * 1000)
     })
 
   } catch (error: any) {
