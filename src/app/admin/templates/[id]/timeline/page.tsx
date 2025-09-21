@@ -322,7 +322,7 @@ export default function TimelineEditorPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-white/10 mb-4">
-                {template.embed_url ? (
+                {(template as any).embed_url ? (
                   <div className="text-center">
                     <Video className="w-12 h-12 text-gray-400 mx-auto mb-2" />
                     <p className="text-gray-400">נגן וידאו יבוא כאן</p>
