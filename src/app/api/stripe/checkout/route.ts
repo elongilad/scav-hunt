@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      customer_email: user.email,
+      customer_email: user.email || undefined,
       line_items: lineItems,
       mode: mode,
       success_url: successUrl || `${request.nextUrl.origin}/dashboard/billing/success?session_id={CHECKOUT_SESSION_ID}`,
@@ -108,7 +108,6 @@ export async function POST(request: NextRequest) {
       allow_promotion_codes: true,
       billing_address_collection: 'required',
       payment_method_types: ['card'],
-      locale: 'he', // Hebrew locale
       ...(mode === 'subscription' && {
         subscription_data: {
           metadata: metadata
