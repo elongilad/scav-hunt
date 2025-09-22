@@ -172,7 +172,7 @@ export default async function EventExportPage({ params }: PageProps) {
           child_name: event.child_name,
           date_start: event.date_start,
           status: event.status,
-          hunt_models: event.hunt_models,
+          hunt_models: (event as any).hunt_models,
           teams: teams || []
         }}
       />
