@@ -66,7 +66,7 @@ export async function requireOrgAccess(orgId: string, minRole: 'viewer' | 'edito
     owner: 3
   }
   
-  if (!role || roleHierarchy[role] < roleHierarchy[minRole]) {
+  if (!role || roleHierarchy[role as keyof typeof roleHierarchy] < roleHierarchy[minRole]) {
     redirect('/unauthorized')
   }
   

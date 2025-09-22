@@ -31,6 +31,8 @@ interface TeamData {
   score: number
   completion_time: string
   participants: string[]
+  event_id: string
+  created_at: string
   events: {
     child_name: string
     hunt_models: {
@@ -85,6 +87,7 @@ export default function CompletedPage({ params }: PageProps) {
           completion_time,
           participants,
           event_id,
+          created_at,
           events (
             child_name,
             hunt_models (name)

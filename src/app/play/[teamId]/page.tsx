@@ -89,7 +89,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
 
       if (teamError) throw teamError
 
-      setTeam(teamData)
+      setTeam(teamData as any)
       
       // Store team ID in localStorage
       localStorage.setItem('scavhunt_team_id', params.teamId)
@@ -183,9 +183,9 @@ export default function TeamDashboardPage({ params }: PageProps) {
             
             <CardTitle className="text-2xl mb-2">{team.name}</CardTitle>
             <CardDescription className="text-gray-300">
-              {team.events.child_name 
-                ? `ציד של ${team.events.child_name}` 
-                : team.events.hunt_models.name
+              {(team.events as any)?.[0]?.child_name
+                ? `ציד של ${(team.events as any)[0].child_name}`
+                : (team.events as any)?.[0]?.hunt_models?.name
               }
             </CardDescription>
           </CardHeader>
@@ -207,7 +207,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
               
               <div className="p-3 bg-white/5 rounded-lg">
                 <Clock className="w-6 h-6 text-spy-gold mx-auto mb-1" />
-                <p className="text-white font-bold text-lg">{team.events.hunt_models.estimated_duration}</p>
+                <p className="text-white font-bold text-lg">{(team.events as any)?.[0]?.hunt_models?.estimated_duration}</p>
                 <p className="text-xs text-gray-400">דק׳ צפוי</p>
               </div>
             </div>
@@ -294,7 +294,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
         )}
 
         {/* Event Status Notice */}
-        {team.events.status !== 'active' && (
+        {(team.events as any)?.[0]?.status !== 'active' && (
           <Card className="bg-yellow-500/20 border-yellow-500/30 text-white">
             <CardContent className="p-4 text-center">
               <p className="text-yellow-400 text-sm">

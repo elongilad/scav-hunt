@@ -62,16 +62,6 @@ export default function RoutingStatus({
   const [error, setError] = useState<string | null>(null)
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
 
-  useEffect(() => {
-    if (teamId) {
-      fetchTeamProgress()
-      
-      // Poll for updates every 30 seconds
-      const interval = setInterval(fetchTeamProgress, 30000)
-      return () => clearInterval(interval)
-    }
-  }, [teamId, fetchTeamProgress])
-
   const fetchTeamProgress = useCallback(async () => {
     try {
       setError(null)
@@ -90,6 +80,16 @@ export default function RoutingStatus({
       setLoading(false)
     }
   }, [teamId])
+
+  useEffect(() => {
+    if (teamId) {
+      fetchTeamProgress()
+
+      // Poll for updates every 30 seconds
+      const interval = setInterval(fetchTeamProgress, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [teamId, fetchTeamProgress])
 
   const getNextStation = async () => {
     try {

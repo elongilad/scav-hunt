@@ -115,7 +115,7 @@ export class VideoRenderer {
 
     } catch (error) {
       console.error('Error processing render job:', error)
-      await this.updateJobStatus(jobId, 'failed', 0, undefined, error.message)
+      await this.updateJobStatus(jobId, 'failed', 0, undefined, error instanceof Error ? error.message : 'Unknown error')
     }
   }
 

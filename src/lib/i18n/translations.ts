@@ -91,8 +91,7 @@ export const translations: Record<string, Translations> = {
       sessionExpired: 'הפגישה פגה תוקף',
       checkEmail: 'בדקו את האימייל לקישור אימות',
       orContinueWith: 'או המשיכו עם',
-      hasAccount: 'יש לכם חשבון? התחברו',
-      forgotPassword: 'שכחתם סיסמה?'
+      hasAccount: 'יש לכם חשבון? התחברו'
     },
 
     // Dashboard
@@ -168,7 +167,7 @@ export const translations: Record<string, Translations> = {
       viewMissions: 'צפה במשימות',
       editMissions: 'ערוך משימות',
       addMission: 'הוסף משימה',
-      difficulty: {
+      difficultyLevels: {
         easy: 'קל',
         medium: 'בינוני',
         hard: 'קשה',

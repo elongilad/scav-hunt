@@ -83,7 +83,7 @@ export class VideoRenderingWorker {
    * Process a single render job
    */
   private async processJob(job: Record<string, unknown>): Promise<void> {
-    const jobId = job.id
+    const jobId = job.id as string
     console.log(`Processing job ${jobId}`)
 
     try {
@@ -116,7 +116,7 @@ export class VideoRenderingWorker {
 
     } catch (error) {
       console.error(`Job ${jobId} failed:`, error)
-      await this.updateJobStatus(jobId, 'failed', 0, undefined, error.message)
+      await this.updateJobStatus(jobId, 'failed', 0, undefined, error instanceof Error ? error.message : 'Unknown error')
     }
   }
 
@@ -142,7 +142,7 @@ export class VideoRenderingWorker {
     // Download user clips
     if (job.user_clips && Array.isArray(job.user_clips)) {
       job.user_clips.forEach((clip: Record<string, unknown>, index: number) => {
-        downloads.push(this.downloadFile(clip.file_path, path.join(workspaceDir, `clip_${index}.mp4`)))
+        downloads.push(this.downloadFile(clip.file_path as string, path.join(workspaceDir, `clip_${index}.mp4`)))
       })
     }
 
@@ -187,7 +187,7 @@ export class VideoRenderingWorker {
     const outputPath = path.join(workspaceDir, 'output.mp4')
     
     // Build complex filter for video composition
-    const filterComplex = this.buildFilterComplex(scenes, job.user_clips, workspaceDir)
+    const filterComplex = this.buildFilterComplex(scenes, job.user_clips as unknown[], workspaceDir)
     
     // Generate FFmpeg command
     const command = [
@@ -233,11 +233,12 @@ export class VideoRenderingWorker {
     const audioInputs: string[] = []
 
     scenes.forEach((scene, index) => {
-      const startMs = scene.start_ms || 0
-      const endMs = scene.end_ms || 5000
+      const sceneData = scene as any
+      const startMs = sceneData.start_ms || 0
+      const endMs = sceneData.end_ms || 5000
       const duration = (endMs - startMs) / 1000
 
-      switch (scene.scene_type) {
+      switch (sceneData.scene_type) {
         case 'intro':
         case 'outro':
           // Extract segment from template
@@ -272,12 +273,12 @@ export class VideoRenderingWorker {
           let videoFilter = `[0:v]trim=start=${startMs/1000}:duration=${duration},setpts=PTS-STARTPTS`
           
           // Add text overlay
-          if (scene.overlay_text?.text) {
-            const text = scene.overlay_text.text.replace(/'/g, "\\'").replace(/"/g, '\\"')
-            const x = Math.round((scene.overlay_text.x / 100) * 1920)
-            const y = Math.round((scene.overlay_text.y / 100) * 1080)
-            const fontSize = scene.overlay_text.style.size || 24
-            const fontColor = scene.overlay_text.style.color || '#ffffff'
+          if (sceneData.overlay_text?.text) {
+            const text = sceneData.overlay_text.text.replace(/'/g, "\\'").replace(/"/g, '\\"')
+            const x = Math.round((sceneData.overlay_text.x / 100) * 1920)
+            const y = Math.round((sceneData.overlay_text.y / 100) * 1080)
+            const fontSize = sceneData.overlay_text.style.size || 24
+            const fontColor = sceneData.overlay_text.style.color || '#ffffff'
             
             videoFilter += `,drawtext=text='${text}':x=${x}:y=${y}:fontsize=${fontSize}:fontcolor=${fontColor}:fontfile=/System/Library/Fonts/Arial.ttf`
           }

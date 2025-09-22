@@ -62,7 +62,7 @@ export default function LanguageSwitcher({
       <div className="relative">
         <Button
           variant="outline"
-          size={size}
+          size={size === 'md' ? 'default' : size}
           onClick={() => setIsOpen(!isOpen)}
           className={`
             bg-white/10 border-white/20 text-white hover:bg-white/20
@@ -129,7 +129,7 @@ export default function LanguageSwitcher({
   return (
     <Button
       variant="outline"
-      size={size}
+      size={size === 'md' ? 'default' : size}
       onClick={() => {
         const currentIndex = locales.findIndex(l => l.code === locale)
         const nextIndex = (currentIndex + 1) % locales.length
