@@ -121,7 +121,7 @@ export default async function EventExportPage({ params }: PageProps) {
             
             <div className="text-center p-4 bg-white/5 rounded-lg">
               <MapPin className="w-8 h-8 text-spy-gold mx-auto mb-2" />
-              <p className="font-bold text-white">{event.hunt_models.model_stations.length}</p>
+              <p className="font-bold text-white">{(event as any).hunt_models.model_stations.length}</p>
               <p className="text-sm text-gray-400">עמדות</p>
             </div>
             
@@ -133,7 +133,7 @@ export default async function EventExportPage({ params }: PageProps) {
             
             <div className="text-center p-4 bg-white/5 rounded-lg">
               <Package className="w-8 h-8 text-spy-gold mx-auto mb-2" />
-              <p className="font-bold text-white">{event.hunt_models.name}</p>
+              <p className="font-bold text-white">{(event as any).hunt_models.name}</p>
               <p className="text-sm text-gray-400">מודל ציד</p>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default async function EventExportPage({ params }: PageProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-            {event.hunt_models.model_stations.map((station) => (
+            {(event as any).hunt_models.model_stations.map((station: any) => (
               <div key={station.station_id} className="p-3 bg-white/5 rounded-lg text-center">
                 <QrCode className="w-6 h-6 text-spy-gold mx-auto mb-2" />
                 <p className="font-medium text-white text-sm">{station.station_id}</p>
