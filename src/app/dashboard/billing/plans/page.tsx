@@ -83,7 +83,7 @@ export default async function PricingPlansPage() {
                 <h3 className="font-semibold text-spy-gold">התכנית הנוכחית שלכם</h3>
                 <p className="text-gray-300">
                   אתם כרגע ב{PRICING_PLANS[currentPlanId as keyof typeof PRICING_PLANS].name} • 
-                  מתחדש ב-{new Date(subscription.current_period_end).toLocaleDateString('he-IL')}
+                  מתחדש ב-{new Date((subscription as any).current_period_end).toLocaleDateString('he-IL')}
                 </p>
               </div>
             </div>

@@ -130,7 +130,7 @@ export default async function BillingSuccessPage({ searchParams }: PageProps) {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">תכנית:</span>
                     <span className="font-medium">
-                      {subscription.items.data[0]?.price.nickname || 'מנוי פרימיום'}
+                      {(subscription as any).items?.data?.[0]?.price?.nickname || 'מנוי פרימיום'}
                     </span>
                   </div>
                   

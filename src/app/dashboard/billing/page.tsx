@@ -156,7 +156,7 @@ export default async function BillingPage() {
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="w-4 h-4 text-spy-gold" />
                     <span className="text-gray-300">
-                      מתחדש ב: {new Date(subscription.current_period_end).toLocaleDateString('he-IL')}
+                      מתחדש ב: {new Date((subscription as any).current_period_end).toLocaleDateString('he-IL')}
                     </span>
                   </div>
                 </div>
