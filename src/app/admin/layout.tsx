@@ -110,7 +110,7 @@ export default async function AdminLayout({
             <div className="mt-8 pt-6 border-t border-white/20">
               <div className="text-xs text-gray-400 mb-3">Organizations</div>
               <div className="space-y-1">
-                {orgs.length > 0 ? orgs.map((org) => (
+                {orgs.length > 0 ? (orgs as any[]).map((org) => (
                   <div
                     key={org.id}
                     className="flex items-center justify-between px-3 py-2 text-sm text-gray-300"
