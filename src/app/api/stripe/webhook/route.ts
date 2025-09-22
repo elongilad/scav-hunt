@@ -148,8 +148,8 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription, supa
       stripe_customer_id: subscription.customer,
       plan_id: planId,
       status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000),
-      current_period_end: new Date(subscription.current_period_end * 1000),
+      current_period_start: new Date((subscription as any).current_period_start * 1000),
+      current_period_end: new Date((subscription as any).current_period_end * 1000),
       created_at: new Date(),
       updated_at: new Date()
     })
@@ -160,8 +160,8 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription, supa
     .from('org_subscriptions')
     .update({
       status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000),
-      current_period_end: new Date(subscription.current_period_end * 1000),
+      current_period_start: new Date((subscription as any).current_period_start * 1000),
+      current_period_end: new Date((subscription as any).current_period_end * 1000),
       updated_at: new Date()
     })
     .eq('stripe_subscription_id', subscription.id)
