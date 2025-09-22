@@ -50,7 +50,7 @@ export default async function LiveEventPage({ params }: PageProps) {
       orgs (name)
     `)
     .eq('id', params.id)
-    .in('org_id', orgs.map(org => org.id))
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .single()
 
   if (!event) {
