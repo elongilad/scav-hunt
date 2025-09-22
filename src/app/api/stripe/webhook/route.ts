@@ -179,7 +179,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription, supa
 }
 
 async function handlePaymentSucceeded(invoice: Stripe.Invoice, supabase: any) {
-  if (invoice.subscription) {
+  if ((invoice as any).subscription) {
     // Update subscription status
     await supabase
       .from('org_subscriptions')
@@ -187,7 +187,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice, supabase: any) {
         status: 'active',
         updated_at: new Date()
       })
-      .eq('stripe_subscription_id', invoice.subscription)
+      .eq('stripe_subscription_id', (invoice as any).subscription)
   }
 
   // Log successful payment
@@ -203,7 +203,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice, supabase: any) {
 }
 
 async function handlePaymentFailed(invoice: Stripe.Invoice, supabase: any) {
-  if (invoice.subscription) {
+  if ((invoice as any).subscription) {
     // Update subscription status
     await supabase
       .from('org_subscriptions')
@@ -211,7 +211,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice, supabase: any) {
         status: 'past_due',
         updated_at: new Date()
       })
-      .eq('stripe_subscription_id', invoice.subscription)
+      .eq('stripe_subscription_id', (invoice as any).subscription)
   }
 
   // Log failed payment
