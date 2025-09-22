@@ -143,7 +143,7 @@ export default async function BillingSuccessPage({ searchParams }: PageProps) {
                     <span className="text-gray-400">חידוש הבא:</span>
                     <span className="font-medium flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
-                      {new Date(subscription.current_period_end * 1000).toLocaleDateString('he-IL')}
+                      {new Date((subscription as any).current_period_end * 1000).toLocaleDateString('he-IL')}
                     </span>
                   </div>
                 </>
