@@ -95,7 +95,7 @@ export default function CompletedPage({ params }: PageProps) {
 
       if (!teamData) throw new Error('צוות לא נמצא')
 
-      setTeam(teamData)
+      setTeam(teamData as any)
 
       // Get team progress and stats
       const { data: progressData } = await supabase
@@ -354,9 +354,9 @@ export default function CompletedPage({ params }: PageProps) {
             <div>
               <h4 className="font-medium text-white mb-2">ציד:</h4>
               <p className="text-gray-300">
-                {team.events.child_name 
-                  ? `ציד של ${team.events.child_name}` 
-                  : team.events.hunt_models.name
+                {(team.events as any)?.[0]?.child_name
+                  ? `ציד של ${(team.events as any)[0].child_name}`
+                  : (team.events as any)?.[0]?.hunt_models?.[0]?.name
                 }
               </p>
             </div>
