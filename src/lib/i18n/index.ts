@@ -20,7 +20,7 @@ export const locales: Locale[] = [
   }
 ]
 
-export const defaultLocale = 'he'
+export const defaultLocale = 'en'
 
 export function getLocaleFromCode(code: string): Locale {
   return locales.find(locale => locale.code === code) || locales[0]

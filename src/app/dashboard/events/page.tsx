@@ -3,9 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { LogoutButton } from '@/components/LogoutButton'
 import Link from 'next/link'
-import { 
-  Calendar, 
+import {
+  Calendar,
   Plus,
   Search,
   Eye,
@@ -21,7 +22,7 @@ import {
 export default async function EventsPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get all events for user's organizations
   const { data: events } = await supabase
@@ -66,6 +67,11 @@ export default async function EventsPage() {
         </div>
         
         <div className="flex gap-4">
+          <LogoutButton
+            variant="outline"
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+          />
+
           <Link href="/dashboard/events/new">
             <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
               <Plus className="w-4 h-4 mr-2" />

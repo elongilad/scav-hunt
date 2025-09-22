@@ -34,7 +34,10 @@ export default function LanguageSwitcher({
 
   if (variant === 'inline') {
     return (
-      <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+      <div
+        className="flex items-center gap-2"
+        style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+      >
         {locales.map((localeOption) => (
           <button
             key={localeOption.code}
@@ -64,10 +67,8 @@ export default function LanguageSwitcher({
           variant="outline"
           size={size === 'md' ? 'default' : size}
           onClick={() => setIsOpen(!isOpen)}
-          className={`
-            bg-white/10 border-white/20 text-white hover:bg-white/20
-            ${isRTL ? 'flex-row-reverse' : 'flex-row'}
-          `}
+          className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+          style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
         >
           {showFlag && <span className={rtlClass('mr-2', 'ml-2')}>{currentLocale.flag}</span>}
           {showText && <span>{currentLocale.name}</span>}
@@ -83,11 +84,10 @@ export default function LanguageSwitcher({
             />
             
             {/* Dropdown */}
-            <Card className={`
-              absolute top-full mt-2 z-50 min-w-[160px]
-              bg-white/10 backdrop-blur-md border-white/20
-              ${isRTL ? 'right-0' : 'left-0'}
-            `}>
+            <Card
+              className="absolute top-full mt-2 z-50 min-w-[160px] bg-white/10 backdrop-blur-md border-white/20"
+              style={{ [isRTL ? 'right' : 'left']: 0 }}
+            >
               <CardContent className="p-2">
                 {locales.map((localeOption) => (
                   <button
@@ -99,14 +99,17 @@ export default function LanguageSwitcher({
                     className={`
                       w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200
                       flex items-center justify-between
-                      ${locale === localeOption.code 
-                        ? 'bg-spy-gold text-black' 
+                      ${locale === localeOption.code
+                        ? 'bg-spy-gold text-black'
                         : 'text-white hover:bg-white/20'
                       }
-                      ${isRTL ? 'flex-row-reverse' : 'flex-row'}
                     `}
+                    style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
                   >
-                    <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <div
+                      className="flex items-center"
+                      style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                    >
                       {showFlag && (
                         <span className={rtlClass('mr-2', 'ml-2')}>{localeOption.flag}</span>
                       )}
@@ -135,10 +138,8 @@ export default function LanguageSwitcher({
         const nextIndex = (currentIndex + 1) % locales.length
         setLocale(locales[nextIndex].code)
       }}
-      className={`
-        bg-white/10 border-white/20 text-white hover:bg-white/20
-        ${isRTL ? 'flex-row-reverse' : 'flex-row'}
-      `}
+      className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+      style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
     >
       {showFlag ? (
         <span className={rtlClass('mr-2', 'ml-2')}>{currentLocale.flag}</span>
@@ -153,12 +154,12 @@ export default function LanguageSwitcher({
 // Floating language switcher for mobile
 export function FloatingLanguageSwitcher() {
   const { isRTL } = useRTL()
-  
+
   return (
-    <div className={`
-      fixed bottom-4 z-50 md:hidden
-      ${isRTL ? 'left-4' : 'right-4'}
-    `}>
+    <div
+      className="fixed bottom-4 z-50 md:hidden"
+      style={{ [isRTL ? 'left' : 'right']: '1rem' }}
+    >
       <LanguageSwitcher 
         variant="button" 
         size="sm" 
@@ -196,18 +197,24 @@ export function LanguageSettings() {
                 className={`
                   p-4 rounded-lg border transition-all duration-200
                   flex items-center justify-between
-                  ${locale === localeOption.code 
-                    ? 'bg-spy-gold/20 border-spy-gold/50 text-spy-gold' 
+                  ${locale === localeOption.code
+                    ? 'bg-spy-gold/20 border-spy-gold/50 text-spy-gold'
                     : 'bg-white/5 border-white/20 text-white hover:bg-white/10'
                   }
-                  ${isRTL ? 'flex-row-reverse' : 'flex-row'}
                 `}
+                style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
               >
-                <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <span className={`text-2xl ${isRTL ? 'ml-3' : 'mr-3'}`}>
+                <div
+                  className="flex items-center"
+                  style={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                >
+                  <span
+                    className="text-2xl"
+                    style={{ [isRTL ? 'marginLeft' : 'marginRight']: '0.75rem' }}
+                  >
                     {localeOption.flag}
                   </span>
-                  <div className={isRTL ? 'text-right' : 'text-left'}>
+                  <div style={{ textAlign: isRTL ? 'right' : 'left' }}>
                     <p className="font-medium">{localeOption.name}</p>
                     <p className="text-sm opacity-75">
                       {localeOption.code === 'he' ? 'Hebrew' : 'English'}
@@ -220,7 +227,10 @@ export function LanguageSettings() {
                     <Badge className="bg-spy-gold text-black">
                       {t('common.active')}
                     </Badge>
-                    <Check className={`w-5 h-5 text-spy-gold ${isRTL ? 'mr-2' : 'ml-2'}`} />
+                    <Check
+                      className="w-5 h-5 text-spy-gold"
+                      style={{ [isRTL ? 'marginRight' : 'marginLeft']: '0.5rem' }}
+                    />
                   </div>
                 )}
               </button>

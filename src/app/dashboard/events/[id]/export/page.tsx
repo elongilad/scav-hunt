@@ -25,7 +25,7 @@ interface PageProps {
 export default async function EventExportPage({ params }: PageProps) {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get event details with teams and stations
   const { data: event } = await supabase

@@ -19,7 +19,7 @@ import {
 export default async function VideoTemplatesPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get video templates (media assets of type video)
   const { data: templates } = await supabase

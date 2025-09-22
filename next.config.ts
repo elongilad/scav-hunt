@@ -7,18 +7,40 @@ const nextConfig: NextConfig = {
     }
   },
   images: {
-    domains: [
-      'lh3.googleusercontent.com', // Google user avatars
-      'supabase.co', // Supabase storage
-      'drive.google.com', // Google Drive videos
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'drive.google.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+        pathname: '/**',
+      },
     ],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
-  // Support for Hebrew/RTL
-  i18n: {
-    locales: ['en', 'he'],
-    defaultLocale: 'he',
-    localeDetection: false
-  }
+  // Note: i18n is handled at the app level in App Router
+  // See: https://nextjs.org/docs/app/building-your-application/routing/internationalization
 };
 
 export default nextConfig;

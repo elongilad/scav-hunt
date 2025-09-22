@@ -23,7 +23,7 @@ import {
 export default async function RendersPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get render jobs for user's organizations
   const { data: renderJobs } = await supabase

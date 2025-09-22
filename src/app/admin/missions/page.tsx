@@ -18,7 +18,7 @@ import {
 export default async function MissionsOverviewPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get all missions across all hunt models for user's organizations
   const { data: missions } = await supabase

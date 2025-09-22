@@ -31,7 +31,7 @@ interface PageProps {
 export default async function LiveEventPage({ params }: PageProps) {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get event details
   const { data: event } = await supabase

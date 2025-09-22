@@ -28,7 +28,16 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "warn",
       "react/no-unescaped-entities": "warn",
       "react/jsx-no-undef": "warn",
-      "jsx-a11y/alt-text": "warn",
+      "jsx-a11y/alt-text": [
+        "warn",
+        {
+          elements: ["img", "object", "area", "input[type=\"image\"]"],
+          img: [],
+          object: [],
+          area: [],
+          "input[type=\"image\"]": []
+        }
+      ],
       "@next/next/no-page-custom-font": "warn",
       "prefer-const": "warn",
     },

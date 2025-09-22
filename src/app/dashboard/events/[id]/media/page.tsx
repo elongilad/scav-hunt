@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -58,12 +58,7 @@ export default function EventMediaPage({ params }: PageProps) {
   const router = useRouter()
   const supabase = createClient()
 
-  useEffect(() => {
-    loadEventData()
-    loadMediaFiles()
-  }, [])
-
-  const loadEventData = async () => {
+  const loadEventData = useCallback(async () => {
     try {
       const { data: eventData } = await supabase
         .from('events')
@@ -80,9 +75,9 @@ export default function EventMediaPage({ params }: PageProps) {
     } catch (error) {
       console.error('Error loading event:', error)
     }
-  }
+  }, [supabase, params.id])
 
-  const loadMediaFiles = async () => {
+  const loadMediaFiles = useCallback(async () => {
     try {
       // Load existing media files for this event
       const { data: existingMedia } = await supabase
@@ -109,7 +104,12 @@ export default function EventMediaPage({ params }: PageProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase, params.id])
+
+  useEffect(() => {
+    loadEventData()
+    loadMediaFiles()
+  }, [loadEventData, loadMediaFiles])
 
   const handleFileSelect = (files: FileList) => {
     const newFiles: MediaFile[] = Array.from(files).map(file => ({
@@ -137,7 +137,7 @@ export default function EventMediaPage({ params }: PageProps) {
 
   const getFileIcon = (type: string) => {
     switch (type) {
-      case 'image': return <Image className="w-5 h-5" />
+      case 'image': return <Image className="w-5 h-5" aria-hidden="true" />
       case 'video': return <Video className="w-5 h-5" />
       case 'audio': return <Music className="w-5 h-5" />
       default: return <FileText className="w-5 h-5" />

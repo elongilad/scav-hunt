@@ -16,7 +16,7 @@ import {
 export default async function StationsOverviewPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get all stations across all hunt models for user's organizations
   const { data: stations } = await supabase

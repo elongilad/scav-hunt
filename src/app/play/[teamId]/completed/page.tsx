@@ -129,8 +129,8 @@ export default function CompletedPage({ params }: PageProps) {
       const totalTeams = leaderboardData.leaderboard?.length || 0
 
       // Calculate total time
-      const totalTime = teamData.completion_time && teamData.created_at
-        ? (new Date(teamData.completion_time).getTime() - new Date(teamData.created_at).getTime()) / 60000
+      const totalTime = teamData.completion_time && (teamData as any).created_at
+        ? (new Date(teamData.completion_time).getTime() - new Date((teamData as any).created_at).getTime()) / 60000
         : 0
 
       setStats({

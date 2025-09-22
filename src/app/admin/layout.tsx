@@ -1,16 +1,15 @@
 import { requireAuth, getUserOrgs } from '@/lib/auth'
-import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { 
-  Settings, 
-  Video, 
-  Map, 
-  Users, 
-  Image, 
-  ArrowRight,
+import {
+  Video,
+  Map,
+  Image,
   Home,
-  FileText 
+  FileText,
+  Settings,
+  Users
 } from 'lucide-react'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 
 export default async function AdminLayout({
   children,
@@ -29,7 +28,7 @@ export default async function AdminLayout({
             <div className="flex items-center space-x-6">
               <Link href="/dashboard" className="flex items-center space-x-2 text-white hover:text-spy-gold">
                 <Home className="w-5 h-5" />
-                <span>חזור ללוח הבקרה</span>
+                <span>Back to Dashboard</span>
               </Link>
               
               <div className="w-px h-6 bg-white/20" />
@@ -40,6 +39,7 @@ export default async function AdminLayout({
             </div>
             
             <div className="flex items-center space-x-4">
+              <LanguageSwitcher variant="button" size="sm" />
               <span className="text-gray-300 text-sm">
                 {user.email}
               </span>
@@ -63,7 +63,7 @@ export default async function AdminLayout({
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Settings className="w-5 h-5" />
-                <span>סקירה כללית</span>
+                <span>Overview</span>
               </Link>
               
               <Link
@@ -71,7 +71,7 @@ export default async function AdminLayout({
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Map className="w-5 h-5" />
-                <span>מודלי ציד</span>
+                <span>Hunt Models</span>
               </Link>
               
               <Link
@@ -79,7 +79,7 @@ export default async function AdminLayout({
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Users className="w-5 h-5" />
-                <span>עמדות</span>
+                <span>Stations</span>
               </Link>
               
               <Link
@@ -87,15 +87,15 @@ export default async function AdminLayout({
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <FileText className="w-5 h-5" />
-                <span>משימות</span>
+                <span>Missions</span>
               </Link>
               
               <Link
                 href="/admin/media"
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
-                <Image className="w-5 h-5" />
-                <span>ספריית מדיה</span>
+                <Image className="w-5 h-5" aria-hidden="true" />
+                <span>Media Library</span>
               </Link>
               
               <Link
@@ -103,24 +103,28 @@ export default async function AdminLayout({
                 className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Video className="w-5 h-5" />
-                <span>תבניות וידאו</span>
+                <span>Video Templates</span>
               </Link>
             </nav>
             
             <div className="mt-8 pt-6 border-t border-white/20">
-              <div className="text-xs text-gray-400 mb-3">ארגונים</div>
+              <div className="text-xs text-gray-400 mb-3">Organizations</div>
               <div className="space-y-1">
-                {orgs.map((org) => (
+                {orgs.length > 0 ? orgs.map((org) => (
                   <div
                     key={org.id}
                     className="flex items-center justify-between px-3 py-2 text-sm text-gray-300"
                   >
                     <span className="truncate">{org.name}</span>
                     <span className="text-xs text-gray-500">
-                      {(org as any).org_members.role}
+                      {org.org_members?.role || 'owner'}
                     </span>
                   </div>
-                ))}
+                )) : (
+                  <div className="px-3 py-2 text-sm text-gray-500">
+                    No organizations found
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -18,7 +18,7 @@ import {
 export default async function HuntModelsPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get all hunt models for user's organizations
   const { data: huntModels } = await supabase

@@ -20,7 +20,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState(defaultLocale)
-  const [direction, setDirection] = useState<'ltr' | 'rtl'>('rtl')
+  const [direction, setDirection] = useState<'ltr' | 'rtl'>('ltr')
 
   useEffect(() => {
     // Load saved locale from localStorage

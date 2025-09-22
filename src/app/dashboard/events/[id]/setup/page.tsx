@@ -441,7 +441,7 @@ export default function EventSetupPage({ params }: PageProps) {
                           id={`photos-${station.station_id}`}
                         />
                         <label htmlFor={`photos-${station.station_id}`} className="cursor-pointer">
-                          <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                          <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" aria-hidden="true" />
                           <p className="text-gray-400 text-sm">לחץ להעלאת תמונות</p>
                         </label>
                         

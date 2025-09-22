@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useRouter } from 'next/navigation'
 import { useLanguage, useRTL } from '@/components/LanguageProvider'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
-import { Eye, EyeOff, Mail, Lock, Loader2 } from 'lucide-react'
+import { signUpWithEmail } from '@/app/auth/actions'
+import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -28,16 +29,12 @@ export default function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
-          }
-        })
-        
-        if (error) throw error
-        setMessage(t('auth.checkEmail'))
+        const result = await signUpWithEmail(email, password)
+
+        if (!result.success) {
+          throw new Error(result.message)
+        }
+        setMessage(result.message)
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -48,7 +45,20 @@ export default function LoginPage() {
         router.push('/dashboard')
       }
     } catch (error: any) {
-      setMessage(error.message)
+      console.error('Auth error:', error)
+
+      // Check for common Supabase error patterns
+      if (error.message?.includes('Database error')) {
+        setMessage('Database configuration issue. Please check the database triggers.')
+      } else if (error.message?.includes('Email not confirmed')) {
+        setMessage('Please check your email and click the confirmation link before signing in.')
+      } else if (error.message?.includes('Invalid login credentials')) {
+        setMessage('Invalid email or password.')
+      } else if (error.message?.includes('Email rate limit exceeded')) {
+        setMessage('Too many signup attempts. Please wait before trying again.')
+      } else {
+        setMessage(error.message || 'An unexpected error occurred')
+      }
     } finally {
       setLoading(false)
     }
@@ -68,14 +78,31 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-spy-dark via-gray-900 to-black p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-spy-dark via-gray-900 to-black p-4 relative">
+      {/* Back Button */}
+      <button
+        onClick={() => router.push('/')}
+        className="absolute top-6 left-6 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-lg rounded-full border border-white/20 text-white transition-colors z-10"
+        aria-label="Back to home"
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
+
       <div className="max-w-md w-full">
         {/* Language Switcher */}
         <div className={`mb-4 ${isRTL ? 'text-left' : 'text-right'}`}>
           <LanguageSwitcher variant="dropdown" />
         </div>
 
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+        <Card className="bg-white/10 backdrop-blur-lg border-white/20 relative">
+          {/* Close Button */}
+          <button
+            onClick={() => router.push('/')}
+            className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
           <CardHeader className="text-center">
             <div className="w-16 h-16 bg-spy-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🕵️</span>
@@ -173,7 +200,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-white/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-transparent text-gray-400 hebrew-body">
+                  <span className={`px-4 bg-gradient-to-br from-spy-dark via-gray-900 to-black text-gray-400 hebrew-body ${isRTL ? 'text-right' : 'text-left'}`}>
                     {t('auth.orContinueWith')}
                   </span>
                 </div>

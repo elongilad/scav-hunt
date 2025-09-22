@@ -1,13 +1,14 @@
 import { requireAuth, getUserOrgs } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
+import { LogoutButton } from '@/components/LogoutButton'
 import Link from 'next/link'
 import { Plus, Settings, Users, Video, MapPin } from 'lucide-react'
 
 export default async function DashboardPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get recent events for the user's orgs
   const { data: events } = await supabase
@@ -39,13 +40,18 @@ export default async function DashboardPage() {
           </div>
           
           <div className="flex gap-4">
+            <LogoutButton
+              variant="outline"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            />
+
             <Link href="/admin">
               <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                 <Settings className="w-4 h-4 mr-2" />
                 Admin Studio
               </Button>
             </Link>
-            
+
             <Link href="/dashboard/events/new">
               <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
                 <Plus className="w-4 h-4 mr-2" />

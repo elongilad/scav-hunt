@@ -82,15 +82,37 @@ export default function NewEventPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('משתמש לא מחובר')
 
-      const { data: orgs } = await supabase
+      let { data: orgs } = await supabase
         .from('org_members')
         .select('org_id')
         .eq('user_id', user.id)
         .eq('role', 'owner')
         .limit(1)
 
+      // If no organization exists, create one automatically
       if (!orgs || orgs.length === 0) {
-        throw new Error('לא נמצא ארגון')
+        console.log('No organization found, creating default organization for user:', user.id)
+
+        // Create a default organization via API
+        const orgName = `${user.email?.split('@')[0] || 'User'} Organization`
+        console.log('Attempting to create organization:', orgName)
+
+        const response = await fetch('/api/organizations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: orgName })
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(`Failed to create organization: ${error.error}`)
+        }
+
+        const { organization: newOrg } = await response.json()
+        console.log('Created new organization:', newOrg.id)
+
+        // Update orgs array to use the new organization
+        orgs = [{ org_id: newOrg.id }]
       }
 
       const orgId = orgs[0].org_id

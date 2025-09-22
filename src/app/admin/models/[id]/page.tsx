@@ -7,14 +7,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { 
   ArrowLeft, 
-  MapPin, 
-  Users, 
-  Video, 
+  MapPin,
+  Users,
+  Video,
   Plus,
   Edit,
-  Settings,
-  Eye,
-  Trash2
+  Eye
 } from 'lucide-react'
 
 interface PageProps {
@@ -25,7 +23,7 @@ interface PageProps {
 
 export default async function HuntModelDetailPage({ params }: PageProps) {
   const user = await requireAuth()
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get hunt model with organization info
   const { data: huntModel, error } = await supabase
@@ -110,7 +108,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
             )}
             <p className="text-gray-500 text-sm mt-1">
               נוצר ב-{new Date(huntModel.created_at).toLocaleDateString('he-IL')} • 
-              ארגון: {(huntModel as any).orgs?.name}
+              ארגון: {huntModel.orgs?.name}
             </p>
           </div>
         </div>
@@ -290,7 +288,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h4 className="font-medium text-white">
-                          {mission.title || `משימה ל-${(mission as any).model_stations.display_name}`}
+                          {mission.title || `משימה ל-${mission.model_stations.display_name}`}
                         </h4>
                         <Badge 
                           variant={mission.active ? "default" : "secondary"}
@@ -301,7 +299,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                       </div>
                       
                       <p className="text-sm text-gray-400 mb-2">
-                        יעד: {(mission as any).model_stations.display_name}
+                        יעד: {mission.model_stations.display_name}
                       </p>
                       
                       {mission.clue && typeof mission.clue === 'object' && mission.clue.text && (

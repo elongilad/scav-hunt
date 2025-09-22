@@ -2,8 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
 export async function requireAuth() {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -16,8 +16,13 @@ export async function requireAuth() {
 }
 
 export async function getUserOrgs(userId: string) {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
+  // Temporarily return empty array to avoid RLS recursion issue
+  // TODO: Fix org_members RLS policies to allow proper querying
+  return []
+
+  /* Original implementation causing infinite recursion:
   const { data: orgs, error } = await supabase
     .from('orgs')
     .select(`
@@ -36,11 +41,12 @@ export async function getUserOrgs(userId: string) {
   }
 
   return orgs
+  */
 }
 
 export async function getUserRole(userId: string, orgId: string) {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
   const { data, error } = await supabase
     .from('org_members')
     .select('role')

@@ -62,44 +62,72 @@ export default function NewHuntModelPage() {
       if (!user) throw new Error('User not authenticated')
 
       // Get user's default org
-      const { data: orgs } = await supabase
+      let { data: orgs } = await supabase
         .from('org_members')
         .select('org_id')
         .eq('user_id', user.id)
         .eq('role', 'owner')
         .limit(1)
 
+      // If no organization exists, create one automatically
       if (!orgs || orgs.length === 0) {
-        throw new Error('No organization found')
+        console.log('No organization found, creating default organization for user:', user.id)
+
+        // Create a default organization via API
+        const orgName = `${user.email?.split('@')[0] || 'User'} Organization`
+        console.log('Attempting to create organization:', orgName)
+
+        const response = await fetch('/api/organizations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: orgName })
+        })
+
+        if (!response.ok) {
+          const error = await response.json()
+          throw new Error(`Failed to create organization: ${error.error}`)
+        }
+
+        const { organization: newOrg } = await response.json()
+        console.log('Created new organization:', newOrg.id)
+
+        // Update orgs array to use the new organization
+        orgs = [{ org_id: newOrg.id }]
       }
 
-      // Create hunt model
-      const { data: huntModel, error } = await supabase
-        .from('hunt_models')
-        .insert({
+      // Create hunt model via API
+      const modelResponse = await fetch('/api/hunt-models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           org_id: orgs[0].org_id,
           name: formData.name.trim(),
           description: formData.description.trim() || null,
           locale: formData.locale,
           active: formData.active
         })
-        .select()
-        .single()
+      })
 
-      if (error) throw error
+      if (!modelResponse.ok) {
+        const error = await modelResponse.json()
+        throw new Error(`Failed to create hunt model: ${error.error}`)
+      }
+
+      const { huntModel } = await modelResponse.json()
 
       // Redirect to the new model's edit page
       router.push(`/admin/models/${huntModel.id}`)
-      
-    } catch (error: any) {
+
+    } catch (error: unknown) {
       console.error('Error creating hunt model:', error)
-      setErrors({ submit: error.message || 'שגיאה ביצירת המודל' })
+      const errorMessage = error instanceof Error ? error.message : 'Error creating hunt model'
+      setErrors({ submit: errorMessage })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInputChange = (field: keyof FormData, value: any) => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
     // Clear field error when user starts typing
     if (errors[field]) {

@@ -4,22 +4,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
-import { 
-  Plus, 
-  Map, 
-  Users, 
-  Video, 
-  FileText, 
+import {
+  Plus,
+  Map,
+  Users,
+  Video,
   Image,
-  TrendingUp,
-  Clock,
   CheckCircle
 } from 'lucide-react'
 
 export default async function AdminOverviewPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get stats for the user's organizations
   const orgIds = orgs.map(org => org.id)
@@ -62,7 +59,7 @@ export default async function AdminOverviewPage() {
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">Admin Studio</h1>
           <p className="text-gray-300">
-            נהל מודלי ציד, עמדות, משימות ותבניות וידאו
+            Manage hunt models, stations, missions and video templates
           </p>
         </div>
         
@@ -70,7 +67,7 @@ export default async function AdminOverviewPage() {
           <Link href="/admin/models/new">
             <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
               <Plus className="w-4 h-4 mr-2" />
-              מודל ציד חדש
+              New Hunt Model
             </Button>
           </Link>
         </div>
@@ -80,7 +77,7 @@ export default async function AdminOverviewPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">מודלי ציד</CardTitle>
+            <CardTitle className="text-sm font-medium">Hunt Models</CardTitle>
             <Map className="h-4 w-4 text-spy-gold" />
           </CardHeader>
           <CardContent>
@@ -93,8 +90,8 @@ export default async function AdminOverviewPage() {
 
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">קבצי מדיה</CardTitle>
-            <Image className="h-4 w-4 text-spy-gold" />
+            <CardTitle className="text-sm font-medium">Media Files</CardTitle>
+            <Image className="h-4 w-4 text-spy-gold" aria-hidden="true" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.mediaAssets}</div>
@@ -227,7 +224,7 @@ export default async function AdminOverviewPage() {
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-spy-gold/20 rounded-lg flex items-center justify-center">
-                  <Image className="w-5 h-5 text-spy-gold" />
+                  <Image className="w-5 h-5 text-spy-gold" aria-hidden="true" />
                 </div>
                 <div>
                   <CardTitle className="text-lg">ספריית מדיה</CardTitle>

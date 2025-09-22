@@ -480,7 +480,10 @@ export const translations: Record<string, Translations> = {
       loginError: 'Login Error',
       invalidCredentials: 'Invalid credentials',
       networkError: 'Network error - please try again',
-      sessionExpired: 'Session expired'
+      sessionExpired: 'Session expired',
+      checkEmail: 'Check your email for a verification link',
+      orContinueWith: 'or continue with',
+      hasAccount: 'Already have an account? Sign in'
     },
 
     // Dashboard
