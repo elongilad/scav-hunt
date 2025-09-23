@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,9 +57,9 @@ interface MediaAsset {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 const SCENE_TYPES = [
@@ -70,6 +70,7 @@ const SCENE_TYPES = [
 ]
 
 export default function TimelineEditorPage({ params }: PageProps) {
+  const { id } = use(params)
   const [template, setTemplate] = useState<MediaAsset | null>(null)
   const [scenes, setScenes] = useState<VideoTemplateScene[]>([])
   const [selectedScene, setSelectedScene] = useState<VideoTemplateScene | null>(null)
@@ -92,7 +93,7 @@ export default function TimelineEditorPage({ params }: PageProps) {
       const { data: template } = await supabase
         .from('media_assets')
         .select('*')
-        .eq('id', params.id)
+        .eq('id', id)
         .eq('kind', 'video')
         .single()
 
@@ -109,7 +110,7 @@ export default function TimelineEditorPage({ params }: PageProps) {
       const { data: scenes } = await supabase
         .from('video_template_scenes')
         .select('*')
-        .eq('template_asset_id', params.id)
+        .eq('template_asset_id', id)
         .order('order_index')
 
       setScenes(scenes || [])
@@ -199,12 +200,12 @@ export default function TimelineEditorPage({ params }: PageProps) {
       await supabase
         .from('video_template_scenes')
         .delete()
-        .eq('template_asset_id', params.id)
+        .eq('template_asset_id', id)
 
       // Insert new scenes
       if (scenes.length > 0) {
         const scenesToInsert = scenes.map(scene => ({
-          template_asset_id: params.id,
+          template_asset_id: id,
           order_index: scene.order_index,
           scene_type: scene.scene_type,
           start_ms: scene.start_ms,
@@ -283,7 +284,7 @@ export default function TimelineEditorPage({ params }: PageProps) {
         </div>
         
         <div className="flex gap-3">
-          <Link href={`/admin/templates/${params.id}/preview`}>
+          <Link href={`/admin/templates/${id}/preview`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Eye className="w-4 h-4 mr-2" />
               תצוגה מקדימה

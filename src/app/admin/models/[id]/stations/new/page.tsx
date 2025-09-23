@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -37,12 +37,13 @@ const STATION_TYPES = [
 ]
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function NewStationPage({ params }: PageProps) {
+  const { id } = use(params)
   const [formData, setFormData] = useState<FormData>({
     id: '',
     display_name: '',
@@ -109,7 +110,7 @@ export default function NewStationPage({ params }: PageProps) {
         .from('model_stations')
         .insert({
           id: formData.id.trim(),
-          model_id: params.id,
+          model_id: id,
           display_name: formData.display_name.trim(),
           type: formData.type,
           default_activity: {
@@ -127,7 +128,7 @@ export default function NewStationPage({ params }: PageProps) {
       }
 
       // Redirect back to model detail page
-      router.push(`/admin/models/${params.id}`)
+      router.push(`/admin/models/${id}`)
       
     } catch (error: any) {
       console.error('Error creating station:', error)
@@ -162,7 +163,7 @@ export default function NewStationPage({ params }: PageProps) {
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/admin/models/${params.id}`}>
+        <Link href={`/admin/models/${id}`}>
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
             חזור למודל
@@ -380,7 +381,7 @@ export default function NewStationPage({ params }: PageProps) {
             )}
           </Button>
           
-          <Link href={`/admin/models/${params.id}`}>
+          <Link href={`/admin/models/${id}`}>
             <Button 
               type="button" 
               variant="outline" 

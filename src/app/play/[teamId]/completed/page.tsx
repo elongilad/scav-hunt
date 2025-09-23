@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -50,12 +50,13 @@ interface TeamStats {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     teamId: string
-  }
+  }>
 }
 
 export default function CompletedPage({ params }: PageProps) {
+  const { teamId } = use(params)
   const [team, setTeam] = useState<TeamData | null>(null)
   const [stats, setStats] = useState<TeamStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -71,7 +72,7 @@ export default function CompletedPage({ params }: PageProps) {
     setTimeout(() => {
       triggerCelebration()
     }, 500)
-  }, [params.teamId])
+  }, [teamId])
 
   const loadCompletionData = async () => {
     setLoading(true)
@@ -93,7 +94,7 @@ export default function CompletedPage({ params }: PageProps) {
             hunt_models (name)
           )
         `)
-        .eq('id', params.teamId)
+        .eq('id', teamId)
         .single()
 
       if (!teamData) throw new Error('צוות לא נמצא')
@@ -104,7 +105,7 @@ export default function CompletedPage({ params }: PageProps) {
       const { data: progressData } = await supabase
         .from('team_progress')
         .select('*')
-        .eq('team_id', params.teamId)
+        .eq('team_id', teamId)
 
       // Get total stations count
       const { data: eventData } = await supabase
@@ -125,7 +126,7 @@ export default function CompletedPage({ params }: PageProps) {
       const leaderboardResponse = await fetch(`/api/routing?action=leaderboard&eventId=${teamData.event_id}`)
       const leaderboardData = await leaderboardResponse.json()
       
-      const teamRank = leaderboardData.leaderboard?.find((entry: any) => entry.team.id === params.teamId)?.rank || 0
+      const teamRank = leaderboardData.leaderboard?.find((entry: any) => entry.team.id === teamId)?.rank || 0
       const totalTeams = leaderboardData.leaderboard?.length || 0
 
       // Calculate total time
@@ -238,7 +239,7 @@ export default function CompletedPage({ params }: PageProps) {
           <Card className="bg-white/10 border-white/20 text-white">
             <CardContent className="p-8 text-center">
               <p className="text-red-400 mb-4">שגיאה בטעינת התוצאות</p>
-              <Link href={`/play/${params.teamId}`}>
+              <Link href={`/play/${teamId}`}>
                 <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   חזור
                 </Button>
@@ -450,7 +451,7 @@ export default function CompletedPage({ params }: PageProps) {
           </Button>
           
           <div className="grid grid-cols-2 gap-3">
-            <Link href={`/play/${params.teamId}/video`}>
+            <Link href={`/play/${teamId}/video`}>
               <Button 
                 variant="outline"
                 className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"

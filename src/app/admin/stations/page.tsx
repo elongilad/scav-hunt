@@ -34,7 +34,7 @@ export default async function StationsOverviewPage() {
         orgs (name)
       )
     `)
-    .in('hunt_models.org_id', orgs.map(org => org.id))
+    .in('hunt_models.org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
 
   // Group stations by type for stats

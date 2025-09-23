@@ -41,7 +41,8 @@ export default function DemoPage() {
               <OptimizedImage
                 src="/demo-thumbnail.jpg"
                 alt="Platform demo video thumbnail"
-                fill
+                width={1200}
+                height={675}
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                 quality={90}
@@ -95,7 +96,8 @@ export default function DemoPage() {
               <OptimizedImage
                 src="/feature-qr.jpg"
                 alt="QR code station setup"
-                fill
+                width={400}
+                height={225}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                 quality={85}
                 className="object-cover"
@@ -131,7 +133,8 @@ export default function DemoPage() {
               <OptimizedImage
                 src="/feature-video.jpg"
                 alt="Video creation interface"
-                fill
+                width={400}
+                height={225}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                 quality={85}
                 className="object-cover"
@@ -167,7 +170,8 @@ export default function DemoPage() {
               <OptimizedImage
                 src="/feature-tracking.jpg"
                 alt="Real-time tracking dashboard"
-                fill
+                width={400}
+                height={225}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
                 quality={85}
                 className="object-cover"

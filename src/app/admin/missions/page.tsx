@@ -42,7 +42,7 @@ export default async function MissionsOverviewPage() {
         display_name
       )
     `)
-    .in('hunt_models.org_id', orgs.map(org => org.id))
+    .in('hunt_models.org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
 
   // Get stats

@@ -20,10 +20,10 @@ import {
 export default async function BillingPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
   // Get current organization (assuming first org for now)
-  const currentOrg = orgs[0]
+  const currentOrg = (orgs as any[])[0]
   if (!currentOrg) {
     return (
       <div className="space-y-8">

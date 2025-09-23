@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,12 +48,13 @@ interface StationMapping {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EventSetupPage({ params }: PageProps) {
+  const { id } = use(params)
   const [event, setEvent] = useState<any>(null)
   const [stations, setStations] = useState<Station[]>([])
   const [mappings, setMappings] = useState<Record<string, StationMapping>>({})
@@ -82,7 +83,7 @@ export default function EventSetupPage({ params }: PageProps) {
           location,
           hunt_models (name)
         `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
       if (!eventData) throw new Error('Event not found')
@@ -115,7 +116,7 @@ export default function EventSetupPage({ params }: PageProps) {
       const { data: existingMappings } = await supabase
         .from('event_station_mappings')
         .select('*')
-        .eq('event_id', params.id)
+        .eq('event_id', id)
 
       existingMappings?.forEach(mapping => {
         if (initialMappings[mapping.station_id]) {
@@ -157,7 +158,7 @@ export default function EventSetupPage({ params }: PageProps) {
       const file = photos[i]
       const fileExt = file.name.split('.').pop()
       const fileName = `${Date.now()}-${i}.${fileExt}`
-      const filePath = `events/${params.id}/stations/${stationId}/${fileName}`
+      const filePath = `events/${id}/stations/${stationId}/${fileName}`
 
       try {
         setUploadProgress(prev => ({ ...prev, [`${stationId}-${i}`]: 0 }))
@@ -200,7 +201,7 @@ export default function EventSetupPage({ params }: PageProps) {
       const { error } = await supabase
         .from('event_station_mappings')
         .upsert({
-          event_id: params.id,
+          event_id: id,
           station_id: stationId,
           real_location: mapping.real_location,
           coordinates: mapping.coordinates,
@@ -228,11 +229,11 @@ export default function EventSetupPage({ params }: PageProps) {
       const { error } = await supabase
         .from('events')
         .update({ status: 'ready' })
-        .eq('id', params.id)
+        .eq('id', id)
 
       if (error) throw error
 
-      router.push(`/dashboard/events/${params.id}`)
+      router.push(`/dashboard/events/${id}`)
     } catch (error) {
       console.error('Error completing setup:', error)
     } finally {
@@ -274,7 +275,7 @@ export default function EventSetupPage({ params }: PageProps) {
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/events/${params.id}`}>
+        <Link href={`/dashboard/events/${id}`}>
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
             חזור

@@ -32,9 +32,9 @@ const planColors = {
 export default async function PricingPlansPage() {
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
-  const currentOrg = orgs[0]
+  const currentOrg = (orgs as any[])[0]
   if (!currentOrg) {
     return <div>ארגון לא נמצא</div>
   }

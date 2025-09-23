@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -50,7 +50,15 @@ interface Station {
   location_hint?: string
 }
 
-export default function EventExportPage() {
+interface PageProps {
+  params: Promise<{
+    orgId: string
+    eventId: string
+  }>
+}
+
+export default function EventExportPage({ params }: PageProps) {
+  const { orgId, eventId } = use(params)
   const [event, setEvent] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
   const [exportOptions, setExportOptions] = useState({
@@ -62,13 +70,12 @@ export default function EventExportPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  const params = useParams()
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     loadEventData()
-  }, [params.eventId])
+  }, [eventId])
 
   const loadEventData = async () => {
     setLoading(true)
@@ -99,7 +106,7 @@ export default function EventExportPage() {
             )
           )
         `)
-        .eq('id', params.eventId)
+        .eq('id', eventId)
         .single()
 
       if (eventError) throw eventError
@@ -241,7 +248,7 @@ export default function EventExportPage() {
             <CardContent className="p-8 text-center">
               <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <p className="text-red-400 mb-4">{error || 'אירוע לא נמצא'}</p>
-              <Link href={`/admin/${params.orgId}/events`}>
+              <Link href={`/admin/${orgId}/events`}>
                 <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   חזור לאירועים
@@ -261,7 +268,7 @@ export default function EventExportPage() {
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader>
             <div className="flex items-center gap-4">
-              <Link href={`/admin/${params.orgId}/events/${params.eventId}`}>
+              <Link href={`/admin/${orgId}/events/${eventId}`}>
                 <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>

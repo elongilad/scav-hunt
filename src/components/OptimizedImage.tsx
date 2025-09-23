@@ -85,7 +85,8 @@ export function HeroImage({ className }: HeroImageProps) {
       <OptimizedImage
         src="/hero-spy.jpg"
         alt="Spy scavenger hunt in action"
-        fill
+        width={1200}
+        height={675}
         priority
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
         quality={90}

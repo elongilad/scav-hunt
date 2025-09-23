@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,12 +21,13 @@ import {
 import Link from 'next/link'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     teamId: string
-  }
+  }>
 }
 
 export default function QRScannerPage({ params }: PageProps) {
+  const { teamId } = use(params)
   const [isScanning, setIsScanning] = useState(false)
   const [manualCode, setManualCode] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -166,7 +167,7 @@ export default function QRScannerPage({ params }: PageProps) {
 
       // Validate that this is a station QR code for this team
       const teamParam = url.searchParams.get('team')
-      if (teamParam && teamParam !== params.teamId) {
+      if (teamParam && teamParam !== teamId) {
         throw new Error('קוד QR זה מיועד לצוות אחר')
       }
 
@@ -175,7 +176,7 @@ export default function QRScannerPage({ params }: PageProps) {
       setSuccess(`נמצאה עמדה: ${stationId}`)
       
       setTimeout(() => {
-        router.push(`/play/${params.teamId}/station/${stationId}`)
+        router.push(`/play/${teamId}/station/${stationId}`)
       }, 1000)
 
     } catch (err: any) {
@@ -200,7 +201,7 @@ export default function QRScannerPage({ params }: PageProps) {
       setSuccess(`מעביר לעמדה: ${stationId}`)
       
       setTimeout(() => {
-        router.push(`/play/${params.teamId}/station/${stationId}`)
+        router.push(`/play/${teamId}/station/${stationId}`)
       }, 1000)
 
     } catch (err: any) {
@@ -217,7 +218,7 @@ export default function QRScannerPage({ params }: PageProps) {
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Link href={`/play/${params.teamId}`}>
+              <Link href={`/play/${teamId}`}>
                 <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white p-2">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>

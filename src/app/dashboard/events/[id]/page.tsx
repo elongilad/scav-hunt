@@ -23,12 +23,13 @@ import {
 } from 'lucide-react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EventDetailsPage({ params }: PageProps) {
+  const { id } = await params
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
   const supabase = await createClient()
@@ -61,8 +62,8 @@ export default async function EventDetailsPage({ params }: PageProps) {
         max_age
       )
     `)
-    .eq('id', params.id)
-    .in('org_id', orgs.map(org => org.id))
+    .eq('id', id)
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .single()
 
   if (!event) {
@@ -164,14 +165,14 @@ export default async function EventDetailsPage({ params }: PageProps) {
         <div className="flex gap-3">
           {event.status === 'draft' && (
             <>
-              <Link href={`/dashboard/events/${event.id}/edit`}>
+              <Link href={`/dashboard/events/${id}/edit`}>
                 <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   <Edit className="w-4 h-4 mr-2" />
                   ערוך
                 </Button>
               </Link>
               
-              <Link href={`/dashboard/events/${event.id}/setup`}>
+              <Link href={`/dashboard/events/${id}/setup`}>
                 <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   <Settings className="w-4 h-4 mr-2" />
                   הגדר עמדות
@@ -180,7 +181,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
             </>
           )}
           
-          <Link href={`/dashboard/events/${event.id}/media`}>
+          <Link href={`/dashboard/events/${id}/media`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Video className="w-4 h-4 mr-2" />
               מדיה ותוכן
@@ -194,7 +195,7 @@ export default async function EventDetailsPage({ params }: PageProps) {
             </Button>
           )}
           
-          <Link href={`/dashboard/events/${event.id}/export`}>
+          <Link href={`/dashboard/events/${id}/export`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Download className="w-4 h-4 mr-2" />
               ייצוא וQR

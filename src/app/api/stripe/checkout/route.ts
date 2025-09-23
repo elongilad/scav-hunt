@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       cancelUrl 
     } = await request.json()
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const cookieStore = cookies()
     
     // Get user from session

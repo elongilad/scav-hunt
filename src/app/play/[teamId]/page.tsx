@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -43,22 +43,23 @@ interface TeamData {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     teamId: string
-  }
+  }>
 }
 
 export default function TeamDashboardPage({ params }: PageProps) {
+  const { teamId } = use(params)
   const [team, setTeam] = useState<TeamData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  
+
   const router = useRouter()
   const supabase = createClient()
 
   useEffect(() => {
     loadTeamData()
-  }, [params.teamId])
+  }, [teamId])
 
   const loadTeamData = async () => {
     setLoading(true)
@@ -84,7 +85,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
             )
           )
         `)
-        .eq('id', params.teamId)
+        .eq('id', teamId)
         .single()
 
       if (teamError) throw teamError
@@ -92,7 +93,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
       setTeam(teamData as any)
       
       // Store team ID in localStorage
-      localStorage.setItem('scavhunt_team_id', params.teamId)
+      localStorage.setItem('scavhunt_team_id', teamId)
       
     } catch (err: any) {
       setError('שגיאה בטעינת נתוני הצוות')
@@ -102,12 +103,12 @@ export default function TeamDashboardPage({ params }: PageProps) {
   }
 
   const goToQRScanner = () => {
-    router.push(`/play/${params.teamId}/scan`)
+    router.push(`/play/${teamId}/scan`)
   }
 
   const goToCurrentStation = () => {
     if (team?.current_station_id) {
-      router.push(`/play/${params.teamId}/station/${team.current_station_id}`)
+      router.push(`/play/${teamId}/station/${team.current_station_id}`)
     }
   }
 
@@ -116,7 +117,7 @@ export default function TeamDashboardPage({ params }: PageProps) {
     if (team) {
       setTeam({ ...team, current_station_id: stationId })
     }
-    router.push(`/play/${params.teamId}/station/${stationId}`)
+    router.push(`/play/${teamId}/station/${stationId}`)
   }
 
   if (loading) {

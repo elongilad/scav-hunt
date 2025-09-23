@@ -47,7 +47,7 @@ export default async function RendersPage() {
         name
       )
     `)
-    .in('events.org_id', orgs.map(org => org.id))
+    .in('events.org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
 
   // Get stats

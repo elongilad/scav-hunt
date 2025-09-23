@@ -44,7 +44,7 @@ export default async function EventsPage() {
         description
       )
     `)
-    .in('org_id', orgs.map(org => org.id))
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .order('date_start', { ascending: false })
 
   // Get stats

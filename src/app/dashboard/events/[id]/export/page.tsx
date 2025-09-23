@@ -17,12 +17,13 @@ import {
 } from 'lucide-react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EventExportPage({ params }: PageProps) {
+  const { id } = await params
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
   const supabase = await createClient()
@@ -47,8 +48,8 @@ export default async function EventExportPage({ params }: PageProps) {
         )
       )
     `)
-    .eq('id', params.id)
-    .in('org_id', orgs.map(org => org.id))
+    .eq('id', id)
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .single()
 
   if (!event) {
@@ -64,7 +65,7 @@ export default async function EventExportPage({ params }: PageProps) {
       status,
       participants
     `)
-    .eq('event_id', params.id)
+    .eq('event_id', id)
 
   return (
     <div className="space-y-8">

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -47,13 +47,14 @@ interface Mission {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     teamId: string
     stationId: string
-  }
+  }>
 }
 
 export default function StationPage({ params }: PageProps) {
+  const { teamId, stationId } = use(params)
   const [station, setStation] = useState<Station | null>(null)
   const [mission, setMission] = useState<Mission | null>(null)
   const [isRecording, setIsRecording] = useState(false)
@@ -82,7 +83,7 @@ export default function StationPage({ params }: PageProps) {
       stopRecording()
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [params.stationId])
+  }, [stationId])
 
   const loadStationData = async () => {
     setLoading(true)
@@ -98,7 +99,7 @@ export default function StationPage({ params }: PageProps) {
             model_id
           )
         `)
-        .eq('id', params.teamId)
+        .eq('id', teamId)
         .single()
 
       if (!team) throw new Error('צוות לא נמצא')
@@ -110,7 +111,7 @@ export default function StationPage({ params }: PageProps) {
         .from('model_stations')
         .select('*')
         .eq('model_id', modelId)
-        .eq('station_id', params.stationId)
+        .eq('station_id', stationId)
         .single()
 
       if (!stationData) throw new Error('עמדה לא נמצאה')
@@ -122,7 +123,7 @@ export default function StationPage({ params }: PageProps) {
         .from('model_missions')
         .select('*')
         .eq('model_id', modelId)
-        .eq('to_station_id', params.stationId)
+        .eq('to_station_id', stationId)
         .eq('active', true)
         .single()
 
@@ -134,8 +135,8 @@ export default function StationPage({ params }: PageProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'start-station',
-          teamId: params.teamId,
-          stationId: params.stationId
+          teamId: teamId,
+          stationId: stationId
         })
       })
 
@@ -275,8 +276,8 @@ export default function StationPage({ params }: PageProps) {
     try {
       // Generate unique filename
       const timestamp = Date.now()
-      const filename = `${params.teamId}_${params.stationId}_${timestamp}.webm`
-      const filePath = `teams/${params.teamId}/clips/${filename}`
+      const filename = `${teamId}_${stationId}_${timestamp}.webm`
+      const filePath = `teams/${teamId}/clips/${filename}`
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -294,8 +295,8 @@ export default function StationPage({ params }: PageProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'complete-station',
-          teamId: params.teamId,
-          stationId: params.stationId,
+          teamId: teamId,
+          stationId: stationId,
           scoreEarned: 100, // Base score - could be dynamic
           userClips: [filePath],
           notes: notes.trim() || undefined
@@ -313,11 +314,11 @@ export default function StationPage({ params }: PageProps) {
       // Navigate to next station or completion
       setTimeout(() => {
         if (result.nextStation?.next_station_id) {
-          router.push(`/play/${params.teamId}/station/${result.nextStation.next_station_id}`)
+          router.push(`/play/${teamId}/station/${result.nextStation.next_station_id}`)
         } else if (result.nextStation?.completion_status === 'completed') {
-          router.push(`/play/${params.teamId}/completed`)
+          router.push(`/play/${teamId}/completed`)
         } else {
-          router.push(`/play/${params.teamId}`)
+          router.push(`/play/${teamId}`)
         }
       }, 2000)
 
@@ -357,7 +358,7 @@ export default function StationPage({ params }: PageProps) {
             <CardContent className="p-8 text-center">
               <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
               <p className="text-red-400 mb-4">{error}</p>
-              <Link href={`/play/${params.teamId}`}>
+              <Link href={`/play/${teamId}`}>
                 <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   חזור
@@ -377,7 +378,7 @@ export default function StationPage({ params }: PageProps) {
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Link href={`/play/${params.teamId}`}>
+              <Link href={`/play/${teamId}`}>
                 <Button size="sm" variant="ghost" className="text-gray-400 hover:text-white p-2">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>

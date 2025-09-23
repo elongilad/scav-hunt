@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const { orgId } = await request.json()
 
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Get user from session
     const { data: { user }, error: authError } = await supabase.auth.getUser()

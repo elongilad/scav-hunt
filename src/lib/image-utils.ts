@@ -34,6 +34,9 @@ export const imageSizes = {
   // Full width images
   fullWidth: '100vw',
 
+  // Standard images
+  standard: '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px',
+
   // Gallery images
   gallery: '(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 300px',
 }

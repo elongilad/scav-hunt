@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -42,12 +42,13 @@ interface MediaFile {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function EventMediaPage({ params }: PageProps) {
+  const { id } = use(params)
   const [event, setEvent] = useState<any>(null)
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([])
   const [uploadQueue, setUploadQueue] = useState<MediaFile[]>([])
@@ -68,14 +69,14 @@ export default function EventMediaPage({ params }: PageProps) {
           status,
           hunt_models (name)
         `)
-        .eq('id', params.id)
+        .eq('id', id)
         .single()
 
       setEvent(eventData)
     } catch (error) {
       console.error('Error loading event:', error)
     }
-  }, [supabase, params.id])
+  }, [supabase, id])
 
   const loadMediaFiles = useCallback(async () => {
     try {
@@ -83,7 +84,7 @@ export default function EventMediaPage({ params }: PageProps) {
       const { data: existingMedia } = await supabase
         .from('event_media')
         .select('*')
-        .eq('event_id', params.id)
+        .eq('event_id', id)
         .order('created_at', { ascending: false })
 
       const formattedMedia: MediaFile[] = existingMedia?.map(media => ({
@@ -104,7 +105,7 @@ export default function EventMediaPage({ params }: PageProps) {
     } finally {
       setLoading(false)
     }
-  }, [supabase, params.id])
+  }, [supabase, id])
 
   useEffect(() => {
     loadEventData()
@@ -169,7 +170,7 @@ export default function EventMediaPage({ params }: PageProps) {
         // Generate file path
         const fileExt = mediaFile.file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-        const filePath = `events/${params.id}/media/${fileName}`
+        const filePath = `events/${id}/media/${fileName}`
 
         // Upload to Supabase Storage
         const { data: uploadData, error: uploadError } = await supabase.storage
@@ -187,7 +188,7 @@ export default function EventMediaPage({ params }: PageProps) {
         const { data: mediaRecord, error: dbError } = await supabase
           .from('event_media')
           .insert({
-            event_id: params.id,
+            event_id: id,
             file_name: mediaFile.name,
             media_type: mediaFile.type,
             storage_path: filePath,
@@ -274,7 +275,7 @@ export default function EventMediaPage({ params }: PageProps) {
     <div className="max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/dashboard/events/${params.id}`}>
+        <Link href={`/dashboard/events/${id}`}>
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
             חזור

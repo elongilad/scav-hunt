@@ -35,7 +35,7 @@ export default async function VideoTemplatesPage() {
       orgs (name)
     `)
     .eq('kind', 'video')
-    .in('org_id', orgs.map(org => org.id))
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
 
   // Get scenes count for each template

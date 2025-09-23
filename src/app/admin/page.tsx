@@ -19,7 +19,7 @@ export default async function AdminOverviewPage() {
   const supabase = await createClient()
 
   // Get stats for the user's organizations
-  const orgIds = orgs.map(org => org.id)
+  const orgIds = (orgs as any[]).map(org => org.id)
 
   const [
     { data: huntModels },

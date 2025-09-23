@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -48,12 +48,13 @@ interface MediaAsset {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function NewMissionPage({ params }: PageProps) {
+  const { id } = use(params)
   const [formData, setFormData] = useState<FormData>({
     to_station_id: '',
     title: '',
@@ -94,7 +95,7 @@ export default function NewMissionPage({ params }: PageProps) {
       const { data: stations } = await supabase
         .from('model_stations')
         .select('id, display_name, type')
-        .eq('model_id', params.id)
+        .eq('model_id', id)
         .order('display_name')
 
       setStations(stations || [])
@@ -160,7 +161,7 @@ export default function NewMissionPage({ params }: PageProps) {
       const { error } = await supabase
         .from('model_missions')
         .insert({
-          model_id: params.id,
+          model_id: id,
           to_station_id: formData.to_station_id,
           title: formData.title.trim(),
           clue: formData.clue,
@@ -173,7 +174,7 @@ export default function NewMissionPage({ params }: PageProps) {
       if (error) throw error
 
       // Redirect back to model detail page
-      router.push(`/admin/models/${params.id}`)
+      router.push(`/admin/models/${id}`)
       
     } catch (error: any) {
       console.error('Error creating mission:', error)
@@ -209,7 +210,7 @@ export default function NewMissionPage({ params }: PageProps) {
     <div className="max-w-2xl mx-auto space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Link href={`/admin/models/${params.id}`}>
+        <Link href={`/admin/models/${id}`}>
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
             חזור למודל
@@ -477,7 +478,7 @@ export default function NewMissionPage({ params }: PageProps) {
             )}
           </Button>
           
-          <Link href={`/admin/models/${params.id}`}>
+          <Link href={`/admin/models/${id}`}>
             <Button 
               type="button" 
               variant="outline" 

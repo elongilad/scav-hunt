@@ -21,7 +21,7 @@ export default async function DashboardPage() {
       created_at,
       orgs (name)
     `)
-    .in('org_id', orgs.map(org => org.id))
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
     .limit(5)
 

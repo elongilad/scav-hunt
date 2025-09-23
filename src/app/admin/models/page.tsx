@@ -32,7 +32,7 @@ export default async function HuntModelsPage() {
       created_at,
       orgs (name)
     `)
-    .in('org_id', orgs.map(org => org.id))
+    .in('org_id', (orgs as any[]).map(org => org.id))
     .order('created_at', { ascending: false })
 
   // Get station counts for each model

@@ -14,17 +14,18 @@ import {
 } from 'lucide-react'
 
 interface PageProps {
-  searchParams: {
+  searchParams: Promise<{
     session_id?: string
-  }
+  }>
 }
 
 export default async function BillingSuccessPage({ searchParams }: PageProps) {
+  const { session_id } = await searchParams
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
-  const supabase = createClient()
+  const supabase = await createClient()
 
-  const currentOrg = orgs[0]
+  const currentOrg = (orgs as any[])[0]
   if (!currentOrg) {
     return <div>ארגון לא נמצא</div>
   }
@@ -33,9 +34,9 @@ export default async function BillingSuccessPage({ searchParams }: PageProps) {
   let subscription = null
 
   // Get Stripe session details if provided
-  if (searchParams.session_id) {
+  if (session_id) {
     try {
-      session = await stripe.checkout.sessions.retrieve(searchParams.session_id)
+      session = await stripe.checkout.sessions.retrieve(session_id)
       
       if (session.subscription) {
         subscription = await stripe.subscriptions.retrieve(session.subscription as string)

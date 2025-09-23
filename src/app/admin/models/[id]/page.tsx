@@ -16,12 +16,13 @@ import {
 } from 'lucide-react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function HuntModelDetailPage({ params }: PageProps) {
+  const { id } = await params
   const user = await requireAuth()
   const supabase = await createClient()
 
@@ -38,7 +39,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
       org_id,
       orgs (name)
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (error || !huntModel) {
@@ -52,7 +53,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
   const { data: stations } = await supabase
     .from('model_stations')
     .select('*')
-    .eq('model_id', params.id)
+    .eq('model_id', id)
     .order('created_at', { ascending: true })
 
   // Get missions for this model
@@ -62,7 +63,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
       *,
       model_stations!inner (display_name)
     `)
-    .eq('model_id', params.id)
+    .eq('model_id', id)
     .order('created_at', { ascending: true })
 
   // Get media assets count
@@ -108,20 +109,20 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
             )}
             <p className="text-gray-500 text-sm mt-1">
               נוצר ב-{new Date(huntModel.created_at).toLocaleDateString('he-IL')} • 
-              ארגון: {huntModel.orgs?.name}
+              ארגון: {(huntModel as any).orgs?.name}
             </p>
           </div>
         </div>
         
         <div className="flex gap-3">
-          <Link href={`/admin/models/${params.id}/edit`}>
+          <Link href={`/admin/models/${id}/edit`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Edit className="w-4 h-4 mr-2" />
               ערוך
             </Button>
           </Link>
           
-          <Link href={`/admin/models/${params.id}/preview`}>
+          <Link href={`/admin/models/${id}/preview`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Eye className="w-4 h-4 mr-2" />
               תצוגה מקדימה
@@ -194,7 +195,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                 עמדות במודל הציד הזה
               </CardDescription>
             </div>
-            <Link href={`/admin/models/${params.id}/stations/new`}>
+            <Link href={`/admin/models/${id}/stations/new`}>
               <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
                 <Plus className="w-4 h-4 mr-2" />
                 עמדה חדשה
@@ -221,7 +222,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                       )}
                     </div>
                     <div className="flex gap-1">
-                      <Link href={`/admin/models/${params.id}/stations/${station.id}/edit`}>
+                      <Link href={`/admin/models/${id}/stations/${station.id}/edit`}>
                         <Button size="sm" variant="ghost" className="w-8 h-8 p-0 text-gray-400 hover:text-white">
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -244,7 +245,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
             <div className="text-center py-8">
               <MapPin className="w-12 h-12 text-gray-600 mx-auto mb-3" />
               <p className="text-gray-400 mb-4">אין עמדות במודל הזה</p>
-              <Link href={`/admin/models/${params.id}/stations/new`}>
+              <Link href={`/admin/models/${id}/stations/new`}>
                 <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
                   <Plus className="w-4 h-4 mr-2" />
                   הוסף עמדה ראשונה
@@ -268,7 +269,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                 משימות שמקשרות בין העמדות
               </CardDescription>
             </div>
-            <Link href={`/admin/models/${params.id}/missions/new`}>
+            <Link href={`/admin/models/${id}/missions/new`}>
               <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
                 <Plus className="w-4 h-4 mr-2" />
                 משימה חדשה
@@ -310,7 +311,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
                     </div>
                     
                     <div className="flex gap-1">
-                      <Link href={`/admin/models/${params.id}/missions/${mission.id}/edit`}>
+                      <Link href={`/admin/models/${id}/missions/${mission.id}/edit`}>
                         <Button size="sm" variant="ghost" className="w-8 h-8 p-0 text-gray-400 hover:text-white">
                           <Edit className="w-4 h-4" />
                         </Button>
@@ -325,7 +326,7 @@ export default async function HuntModelDetailPage({ params }: PageProps) {
               <Users className="w-12 h-12 text-gray-600 mx-auto mb-3" />
               <p className="text-gray-400 mb-4">אין משימות במודל הזה</p>
               {stats.stations > 0 ? (
-                <Link href={`/admin/models/${params.id}/missions/new`}>
+                <Link href={`/admin/models/${id}/missions/new`}>
                   <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
                     <Plus className="w-4 h-4 mr-2" />
                     צור משימה ראשונה

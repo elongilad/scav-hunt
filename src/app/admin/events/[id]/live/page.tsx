@@ -23,12 +23,13 @@ import {
 } from 'lucide-react'
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function LiveEventPage({ params }: PageProps) {
+  const { id } = await params
   const user = await requireAuth()
   const orgs = await getUserOrgs(user.id)
   const supabase = await createClient()
@@ -49,7 +50,7 @@ export default async function LiveEventPage({ params }: PageProps) {
       ),
       orgs (name)
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .in('org_id', (orgs as any[]).map(org => org.id))
     .single()
 
@@ -77,7 +78,7 @@ export default async function LiveEventPage({ params }: PageProps) {
         score_earned
       )
     `)
-    .eq('event_id', params.id)
+    .eq('event_id', id)
     .order('score', { ascending: false })
 
   // Get stations for the event
@@ -120,7 +121,7 @@ export default async function LiveEventPage({ params }: PageProps) {
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-4 mb-2">
-            <Link href={`/dashboard/events/${params.id}`}>
+            <Link href={`/dashboard/events/${id}`}>
               <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                 ← חזור לאירוע
               </Button>
