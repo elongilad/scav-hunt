@@ -42,11 +42,7 @@ export default async function EventControlPage({ params }: Props) {
     notFound()
   }
 
-  await requireOrgAccess({
-    userId: user.id,
-    orgId: event.org_id,
-    minRole: 'admin'
-  })
+  await requireOrgAccess(event.org_id, 'admin')
 
   return (
     <div className="container mx-auto px-4 py-8">

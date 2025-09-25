@@ -117,6 +117,7 @@ export function RouteVisualizationClient({ eventId, initialRoutes = [] }: Props)
         constraints: {
           maxRouteTime: 300, // 5 hours
           avoidCrowdedStations: true,
+          prioritizeOutdoorStations: false,
           includeRestStops: true
         }
       })

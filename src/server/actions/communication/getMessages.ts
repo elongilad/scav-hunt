@@ -30,7 +30,7 @@ export async function getMessages(input: z.infer<typeof Input>) {
   }
 
   // Verify org access
-  await requireOrgAccess(event.org_id, 'viewer')
+  await requireOrgAccess({ userId: user.id, orgId: event.org_id, minRole: 'viewer' })
 
   // Build query
   let query = supabase

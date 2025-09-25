@@ -74,6 +74,15 @@ export function TeamProgressVisualization({ eventId }: Props) {
       if (teamsData && stationsData) {
         const teamsWithProgress = teamsData.map(team => ({
           ...team,
+          current_station: Array.isArray(team.current_station)
+            ? team.current_station[0] || null
+            : team.current_station,
+          visits: team.visits?.map((visit: any) => ({
+            ...visit,
+            station: Array.isArray(visit.station)
+              ? visit.station[0] || null
+              : visit.station
+          })) || [],
           total_stations: stationsData.length,
           progress_percentage: stationsData.length > 0
             ? Math.round((team.visits?.length || 0) / stationsData.length * 100)

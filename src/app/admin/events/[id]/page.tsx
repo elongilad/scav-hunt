@@ -159,7 +159,11 @@ export default async function AdminEventDetailPage({ params }: PageProps) {
             </Button>
           </Link>
 
-          <Link href={`/admin/models/${event.model_versions.hunt_models.id}`}>
+          <Link href={`/admin/models/${(() => {
+            const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+            const huntModel = modelVersion?.hunt_models;
+            return Array.isArray(huntModel) ? huntModel[0]?.id : (huntModel as any)?.id;
+          })()}`}>
             <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
               <Settings className="w-4 h-4 mr-2" />
               המודל
@@ -224,34 +228,68 @@ export default async function AdminEventDetailPage({ params }: PageProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Rocket className="w-5 h-5 text-spy-gold" />
-            מודל ציד - גרסה {event.model_versions.version_number}
+            מודל ציד - גרסה {(() => {
+              const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+              return modelVersion?.version_number;
+            })()}
           </CardTitle>
           <CardDescription className="text-gray-400">
-            מבוסס על {event.model_versions.hunt_models.name}
+            מבוסס על {(() => {
+              const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+              const huntModel = modelVersion?.hunt_models;
+              return Array.isArray(huntModel) ? huntModel[0]?.name : (huntModel as any)?.name;
+            })()}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white font-medium">{event.model_versions.hunt_models.name}</p>
-              <p className="text-gray-300 text-sm">{event.model_versions.hunt_models.description}</p>
+              <p className="text-white font-medium">{(() => {
+                const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                const huntModel = modelVersion?.hunt_models;
+                return Array.isArray(huntModel) ? huntModel[0]?.name : (huntModel as any)?.name;
+              })()}</p>
+              <p className="text-gray-300 text-sm">{(() => {
+                const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                const huntModel = modelVersion?.hunt_models;
+                return Array.isArray(huntModel) ? huntModel[0]?.description : (huntModel as any)?.description;
+              })()}</p>
               <div className="flex gap-2 mt-2">
                 <Badge variant="outline" className="text-xs border-white/20 text-gray-300">
-                  גרסה {event.model_versions.version_number}
+                  גרסה {(() => {
+                    const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                    return modelVersion?.version_number;
+                  })()}
                 </Badge>
                 <Badge
-                  variant={event.model_versions.is_active ? "default" : "secondary"}
-                  className={event.model_versions.is_active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-gray-500/20 text-gray-400 border-gray-500/30"}
+                  variant={(() => {
+                    const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                    return modelVersion?.is_active ? "default" : "secondary";
+                  })()}
+                  className={(() => {
+                    const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                    return modelVersion?.is_active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-gray-500/20 text-gray-400 border-gray-500/30";
+                  })()}
                 >
-                  {event.model_versions.is_active ? 'פעיל' : 'לא פעיל'}
+                  {(() => {
+                    const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                    return modelVersion?.is_active ? 'פעיל' : 'לא פעיל';
+                  })()}
                 </Badge>
                 <Badge variant="outline" className="text-xs border-white/20 text-gray-300">
                   <Calendar className="w-3 h-3 mr-1" />
-                  {new Date(event.model_versions.published_at).toLocaleDateString('he-IL')}
+                  {(() => {
+                    const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+                    return new Date(modelVersion?.published_at).toLocaleDateString('he-IL');
+                  })()}
                 </Badge>
               </div>
             </div>
-            <Link href={`/admin/models/${event.model_versions.hunt_models.id}`}>
+            <Link href={`/admin/models/${(() => {
+              const modelVersion = Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions;
+              const huntModel = modelVersion?.hunt_models;
+              return Array.isArray(huntModel) ? huntModel[0]?.id : (huntModel as any)?.id;
+            })()}`}>
               <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                 <Eye className="w-4 h-4 mr-2" />
                 צפה במודל

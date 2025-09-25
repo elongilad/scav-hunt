@@ -439,7 +439,7 @@ export const translations: Record<string, Translations> = {
     },
 
     // Team Management
-    teams: {
+    team_management: {
       manage_teams: 'ניהול צוותים',
       manage_description: 'יצירה, עריכה ותיאום פעילויות צוות',
       create_team: 'צור צוות',

@@ -152,11 +152,11 @@ export function EventTimeline({ eventId }: Props) {
             id: `visit_${visit.id}`,
             timestamp: visit.visit_time,
             type: 'station_visit',
-            title: `${visit.team?.name} visited ${visit.station?.name}`,
+            title: `${Array.isArray(visit.team) ? visit.team[0]?.name : (visit.team as any)?.name} visited ${Array.isArray(visit.station) ? visit.station[0]?.name : (visit.station as any)?.name}`,
             description: `Station check-in completed`,
             metadata: {
-              team_name: visit.team?.name,
-              station_name: visit.station?.name,
+              team_name: Array.isArray(visit.team) ? visit.team[0]?.name : (visit.team as any)?.name,
+              station_name: Array.isArray(visit.station) ? visit.station[0]?.name : (visit.station as any)?.name,
               importance: 'low'
             }
           })
@@ -182,11 +182,11 @@ export function EventTimeline({ eventId }: Props) {
             type: 'message',
             title: message.message_type === 'announcement' ? 'Announcement sent' :
                    message.message_type === 'hint' ? 'Hint sent' : 'Message sent',
-            description: message.team?.name ?
-              `To ${message.team.name}: ${message.content.substring(0, 50)}${message.content.length > 50 ? '...' : ''}` :
+            description: (Array.isArray(message.team) ? message.team[0]?.name : (message.team as any)?.name) ?
+              `To ${Array.isArray(message.team) ? message.team[0]?.name : (message.team as any)?.name}: ${message.content.substring(0, 50)}${message.content.length > 50 ? '...' : ''}` :
               `Broadcast: ${message.content.substring(0, 50)}${message.content.length > 50 ? '...' : ''}`,
             metadata: {
-              team_name: message.team?.name,
+              team_name: Array.isArray(message.team) ? message.team[0]?.name : (message.team as any)?.name,
               importance: message.is_urgent ? 'high' : 'medium'
             }
           })

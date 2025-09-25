@@ -26,7 +26,8 @@ export default function TestPOIPage() {
         center: { lat, lng },
         radiusMeters: radius,
         maxResults: 50,
-        includeFaithSites: true
+        includeFaithSites: true,
+        providerPreference: 'google'
       })
 
       if (result.ok) {

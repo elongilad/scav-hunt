@@ -53,8 +53,22 @@ export default function RTLCard({
   badges = [],
   actions
 }: RTLCardProps) {
-  const { t, formatDate, formatTime } = useLanguage()
-  const { isRTL, rtlClass, mr, ml } = useRTL()
+  const { t } = useLanguage()
+  const isRTL = useRTL()
+  const rtlClass = isRTL ? 'rtl' : ''
+  const mr = isRTL ? 'ml' : 'mr'
+  const ml = isRTL ? 'mr' : 'ml'
+
+  const formatDate = (date: Date | string) => {
+    return new Intl.DateTimeFormat(isRTL ? 'he-IL' : 'en-US').format(new Date(date))
+  }
+
+  const formatTime = (date: Date | string) => {
+    return new Intl.DateTimeFormat(isRTL ? 'he-IL' : 'en-US', {
+      hour: '2-digit',
+      minute: '2-digit'
+    }).format(new Date(date))
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {

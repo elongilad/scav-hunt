@@ -28,7 +28,7 @@ interface Team {
   current_station_id: string | null
   start_time: string | null
   finish_time: string | null
-  current_station?: { name: string }
+  current_station?: { name: string } | null
   visits_count: number
 }
 
@@ -50,7 +50,7 @@ export function TeamCoordinator({ eventId, stats }: Props) {
         .from('hunt_teams')
         .select(`
           id, name, status, current_station_id, start_time, finish_time,
-          current_station:hunt_stations(name),
+          current_station:hunt_stations!current_station_id(name),
           visits:team_station_visits(id)
         `)
         .eq('event_id', eventId)
@@ -59,6 +59,9 @@ export function TeamCoordinator({ eventId, stats }: Props) {
       if (teamsData) {
         const teamsWithCounts = teamsData.map(team => ({
           ...team,
+          current_station: Array.isArray(team.current_station)
+            ? team.current_station[0] || null
+            : team.current_station,
           visits_count: team.visits?.length || 0
         }))
         setTeams(teamsWithCounts)

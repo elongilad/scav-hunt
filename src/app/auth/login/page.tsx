@@ -20,7 +20,8 @@ export default function LoginPage() {
   const router = useRouter()
   const supabase = createClient()
   const { t } = useLanguage()
-  const { isRTL, rtlClass } = useRTL()
+  const rtlData = useRTL() as any
+  const { isRTL, rtlClass } = rtlData || { isRTL: false, rtlClass: '' }
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -91,7 +92,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         {/* Language Switcher */}
         <div className={`mb-4 ${isRTL ? 'text-left' : 'text-right'}`}>
-          <LanguageSwitcher variant="dropdown" />
+          <LanguageSwitcher />
         </div>
 
         <Card className="bg-white/10 backdrop-blur-lg border-white/20 relative">

@@ -248,7 +248,7 @@ class RouteOptimizer {
 
     // Calculate difficulty and optimization score
     const avgDifficulty = stationDetails.reduce((sum, detail) =>
-      sum + (detail.station.difficulty_level || 1), 0) / stationDetails.length;
+      sum + (detail.station?.difficulty_level || 1), 0) / stationDetails.length;
 
     const optimizationScore = this.calculateOptimizationScore(
       totalTime, totalDistance, avgDifficulty, segments.length

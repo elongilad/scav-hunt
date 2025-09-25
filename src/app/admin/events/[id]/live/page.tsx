@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { requireAuth } from "@/lib/auth/requireAuth";
-import { requireOrgAccess } from "@/lib/auth/requireOrgAccess";
+import { requireOrgAccess } from "@/lib/auth/server";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Play, Pause, AlertCircle, RotateCcw, Eye } from "lucide-react";
@@ -25,11 +25,17 @@ export default async function LiveEventPage({ params }: PageProps) {
     }
 
     // Verify org access
-    await requireOrgAccess({
-      userId: user.id,
-      orgId: (initialData.event as any).orgId || (initialData.event as any).org_id,
-      minRole: "viewer"
-    });
+    await requireOrgAccess((initialData.event as any).org_id, "viewer");
+
+    // Map the data to match the expected interface
+    const mappedData = {
+      ...initialData,
+      event: {
+        id: (initialData.event as any).id,
+        name: (initialData.event as any).child_name || (initialData.event as any).name,
+        startsAt: (initialData.event as any).starts_at
+      }
+    };
 
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -58,7 +64,7 @@ export default async function LiveEventPage({ params }: PageProps) {
         {/* Live Progress Tracker */}
         <LiveProgressTracker
           eventId={id}
-          initialData={initialData}
+          initialData={mappedData as any}
         />
 
         {/* Event Controls */}

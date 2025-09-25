@@ -15,7 +15,7 @@ export default async function AdminLayout({
   console.log(`[DEV] Bypassing getUserOrgs for user ${user.id} in admin layout`)
 
   return (
-    <AdminLayoutClient user={user} orgs={orgs}>
+    <AdminLayoutClient user={{ id: user.id, email: user.email || '' }} orgs={orgs}>
       {children}
     </AdminLayoutClient>
   )

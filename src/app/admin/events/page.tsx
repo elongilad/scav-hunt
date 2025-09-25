@@ -51,9 +51,16 @@ export default async function AdminEventsPage() {
   }, {})
 
 
+  // Transform events data to handle array relationships
+  const transformedEvents = (events || []).map(event => ({
+    ...event,
+    orgs: Array.isArray(event.orgs) ? event.orgs[0] : event.orgs,
+    model_versions: Array.isArray(event.model_versions) ? event.model_versions[0] : event.model_versions
+  }))
+
   return (
     <EventsPageClient
-      events={events || []}
+      events={transformedEvents as any}
       renderStatsByEvent={renderStatsByEvent}
     />
   )

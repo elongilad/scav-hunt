@@ -104,7 +104,7 @@ export function StationHeatMap({ eventId }: Props) {
             .slice(0, 5)
             .map(visit => ({
               visit_time: visit.visit_time,
-              team_name: visit.team?.name || 'Unknown Team'
+              team_name: Array.isArray(visit.team) ? visit.team[0]?.name : (visit.team as any)?.name || 'Unknown Team'
             }))
 
           return {
@@ -117,7 +117,7 @@ export function StationHeatMap({ eventId }: Props) {
             avg_time_spent: Math.round(avgTimeSpent),
             completion_rate: Math.round(completionRate),
             difficulty_score: Math.round(difficultyScore),
-            congestion_level,
+            congestion_level: congestionLevel,
             recent_visits: recentVisits
           }
         })

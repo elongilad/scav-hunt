@@ -10,7 +10,7 @@ const Input = z.object({
   teamId: z.string().uuid().optional(),
   messageType: z.enum(['text', 'image', 'announcement', 'hint', 'emergency']),
   content: z.string().min(1),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   isUrgent: z.boolean().optional(),
   parentMessageId: z.string().uuid().optional()
 })

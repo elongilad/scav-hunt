@@ -26,9 +26,9 @@ export function PublishModelButton({ huntModelId }: PublishModelButtonProps) {
 
       if (result.success) {
         alert(`✅ ${t('model_detail.publish_success', language)
-          .replace('{version}', result.versionNumber.toString())
-          .replace('{stations}', result.stationsCount.toString())
-          .replace('{missions}', result.missionsCount.toString())}`)
+          .replace('{version}', result.versionNumber?.toString() || '0')
+          .replace('{stations}', result.stationsCount?.toString() || '0')
+          .replace('{missions}', result.missionsCount?.toString() || '0')}`)
         window.location.reload() // Refresh to show new version
       } else {
         alert(`❌ ${t('model_detail.publish_error', language)}: ${result.error}`)

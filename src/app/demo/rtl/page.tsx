@@ -19,9 +19,25 @@ import {
   CheckCircle
 } from 'lucide-react'
 
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat('he-IL').format(date)
+}
+
+const formatDateTime = (date: Date) => {
+  return new Intl.DateTimeFormat('he-IL', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date)
+}
+
 export default function RTLDemoPage() {
-  const { t, formatDate, formatDateTime } = useLanguage()
-  const { isRTL, direction, rtlClass } = useRTL()
+  const { t } = useLanguage()
+  const isRTL = useRTL()
+  const direction = isRTL ? 'rtl' : 'ltr'
+  const rtlClass = isRTL ? 'rtl' : ''
 
   // Sample data for demonstration
   const sampleEvent = {
@@ -69,7 +85,7 @@ export default function RTLDemoPage() {
                 </CardDescription>
               </div>
               
-              <LanguageSwitcher variant="dropdown" showFlag={true} showText={true} />
+              <LanguageSwitcher />
             </div>
           </CardHeader>
           <CardContent>

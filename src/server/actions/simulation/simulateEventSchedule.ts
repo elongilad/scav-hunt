@@ -122,14 +122,18 @@ export async function simulateEventSchedule(input: z.infer<typeof Input>) {
       teamAssignments.set(a.event_team_id, []);
     }
     teamAssignments.get(a.event_team_id)!.push({
-      eventMissionId: a.event_mission_id,
-      eventStationId: a.event_station_id
+      event_mission_id: a.event_mission_id,
+      event_station_id: a.event_station_id
     });
   });
 
   // Simulate schedule for each team
   const schedules = teams.map(team => {
-    const teamMissions = teamAssignments.get(team.id) || [];
+    const teamMissions = (teamAssignments.get(team.id) || []).map(tm => ({
+      eventMissionId: tm.event_mission_id,
+      eventStationId: tm.event_station_id,
+      title: tm.title
+    }));
     const schedule = simulateTeamSchedule(teamMissions, travelMatrix, missionDurations);
 
     return {

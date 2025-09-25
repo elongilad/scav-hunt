@@ -11,8 +11,8 @@ export async function getUserOrgs(userId: string) {
   if (error) throw error;
 
   return (data ?? []).map((row) => ({
-    id: row.orgs?.id as string,
-    name: row.orgs?.name as string,
+    id: (row.orgs as any)?.id as string,
+    name: (row.orgs as any)?.name as string,
     role: row.role as "owner" | "admin" | "editor" | "viewer",
   }));
 }
