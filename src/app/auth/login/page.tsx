@@ -5,8 +5,9 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
-import { useLanguage, useRTL } from '@/components/LanguageProvider'
-import LanguageSwitcher from '@/components/LanguageSwitcher'
+// Language functionality removed for static generation
+// import { useLanguage, useRTL } from '@/components/LanguageProvider'
+// import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { signUpWithEmail } from '@/app/auth/actions'
 import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X } from 'lucide-react'
 
@@ -19,9 +20,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const supabase = createClient()
-  const { t } = useLanguage()
-  const rtlData = useRTL() as any
-  const { isRTL, rtlClass } = rtlData || { isRTL: false, rtlClass: '' }
+  // Hardcoded for static generation
+  const isRTL = false
+  const rtlClass = ''
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -92,7 +93,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         {/* Language Switcher */}
         <div className={`mb-4 ${isRTL ? 'text-left' : 'text-right'}`}>
-          <LanguageSwitcher />
+          {/* Language switcher removed for static generation */}
         </div>
 
         <Card className="bg-white/10 backdrop-blur-lg border-white/20 relative">
@@ -109,10 +110,10 @@ export default function LoginPage() {
               <span className="text-2xl">🕵️</span>
             </div>
             <CardTitle className="text-3xl font-bold text-white hebrew-title mb-2">
-              {t('auth.welcomeBack')}
+              Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-300 hebrew-body">
-              {t('auth.loginDescription')}
+              Sign in to your account to continue
             </CardDescription>
           </CardHeader>
 
@@ -124,7 +125,7 @@ export default function LoginPage() {
                   htmlFor="email" 
                   className={`block text-sm font-medium text-gray-300 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
                 >
-                  {t('auth.emailLabel')}
+                  Email
                 </label>
                 <div className="relative">
                   <Mail className={`absolute top-3 w-5 h-5 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
@@ -140,7 +141,7 @@ export default function LoginPage() {
                       focus:border-transparent
                       ${isRTL ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'}
                     `}
-                    placeholder={t('auth.emailPlaceholder')}
+                    placeholder="Enter your email"
                   />
                 </div>
               </div>
@@ -150,7 +151,7 @@ export default function LoginPage() {
                   htmlFor="password" 
                   className={`block text-sm font-medium text-gray-300 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
                 >
-                  {t('auth.passwordLabel')}
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className={`absolute top-3 w-5 h-5 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
@@ -166,7 +167,7 @@ export default function LoginPage() {
                       focus:border-transparent
                       ${isRTL ? 'pr-10 pl-10 text-right' : 'pl-10 pr-10 text-left'}
                     `}
-                    placeholder={t('auth.passwordPlaceholder')}
+                    placeholder="Enter your password"
                   />
                   <button
                     type="button"
@@ -186,10 +187,10 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className={`w-5 h-5 animate-spin ${isRTL ? 'ml-2' : 'mr-2'}`} />
-                    {t('auth.loggingIn')}
+                    Signing In...
                   </>
                 ) : (
-                  isSignUp ? t('auth.createAccount') : t('auth.loginButton')
+                  isSignUp ? 'Create Account' : 'Sign In'
                 )}
               </Button>
             </form>
@@ -202,7 +203,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className={`px-4 bg-gradient-to-br from-spy-dark via-gray-900 to-black text-gray-400 hebrew-body ${isRTL ? 'text-right' : 'text-left'}`}>
-                    {t('auth.orContinueWith')}
+                    or continue with
                   </span>
                 </div>
               </div>
@@ -234,7 +235,7 @@ export default function LoginPage() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                {t('auth.loginWithGoogle')}
+                Sign in with Google
               </Button>
             </div>
 
@@ -245,7 +246,7 @@ export default function LoginPage() {
                 onClick={() => setIsSignUp(!isSignUp)}
                 className="text-spy-gold hover:text-spy-gold/80 text-sm hebrew-body"
               >
-                {isSignUp ? t('auth.hasAccount') : t('auth.noAccount')}
+                {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
               </button>
             </div>
 

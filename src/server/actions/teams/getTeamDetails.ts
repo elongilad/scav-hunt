@@ -95,16 +95,16 @@ export async function getTeamDetails(input: z.infer<typeof Input>) {
         visits: visits?.map(v => ({
           id: v.id,
           stationId: v.event_station_id,
-          stationName: v.event_stations?.display_name || 'Unknown Station',
+          stationName: Array.isArray(v.event_stations) ? v.event_stations[0]?.display_name : (v.event_stations as any)?.display_name || 'Unknown Station',
           visitedAt: v.visited_at,
           completed: v.mission_completed
         })) || [],
         assignments: assignments?.map(a => ({
           id: a.id,
           stationId: a.event_station_id,
-          stationName: a.event_stations?.display_name || 'Unknown Station',
+          stationName: Array.isArray(a.event_stations) ? a.event_stations[0]?.display_name : (a.event_stations as any)?.display_name || 'Unknown Station',
           missionId: a.event_mission_id,
-          missionTitle: a.event_mission_overrides?.title || 'Unknown Mission'
+          missionTitle: Array.isArray(a.event_mission_overrides) ? a.event_mission_overrides[0]?.title : (a.event_mission_overrides as any)?.title || 'Unknown Mission'
         })) || []
       }
     };
