@@ -11,6 +11,8 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Save, Eye, MapPin, Users, Video } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { t } from '@/lib/i18n'
 
 interface FormData {
   name: string
@@ -28,23 +30,24 @@ export default function NewHuntModelPage() {
   })
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  
+
+  const { language } = useLanguage()
   const router = useRouter()
   const supabase = createClient()
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
-    
+
     if (!formData.name.trim()) {
-      newErrors.name = 'שם המודל נדרש'
+      newErrors.name = t('new_model.name_required', language)
     } else if (formData.name.length < 3) {
-      newErrors.name = 'שם המודל חייב להכיל לפחות 3 תווים'
+      newErrors.name = t('new_model.name_min_length', language)
     }
-    
+
     if (formData.description && formData.description.length > 500) {
-      newErrors.description = 'התיאור יכול להכיל עד 500 תווים'
+      newErrors.description = t('new_model.description_max_length', language)
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -59,7 +62,7 @@ export default function NewHuntModelPage() {
     try {
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      if (!user) throw new Error(t('new_model.error_user_not_authenticated', language))
 
       // Get user's default org
       let { data: orgs } = await supabase
@@ -85,7 +88,7 @@ export default function NewHuntModelPage() {
 
         if (!response.ok) {
           const error = await response.json()
-          throw new Error(`Failed to create organization: ${error.error}`)
+          throw new Error(`${t('new_model.error_create_organization', language)}: ${error.error}`)
         }
 
         const { organization: newOrg } = await response.json()
@@ -110,7 +113,7 @@ export default function NewHuntModelPage() {
 
       if (!modelResponse.ok) {
         const error = await modelResponse.json()
-        throw new Error(`Failed to create hunt model: ${error.error}`)
+        throw new Error(`${t('new_model.error_create_model', language)}: ${error.error}`)
       }
 
       const { huntModel } = await modelResponse.json()
@@ -120,7 +123,7 @@ export default function NewHuntModelPage() {
 
     } catch (error: unknown) {
       console.error('Error creating hunt model:', error)
-      const errorMessage = error instanceof Error ? error.message : 'Error creating hunt model'
+      const errorMessage = error instanceof Error ? error.message : t('new_model.error_general', language)
       setErrors({ submit: errorMessage })
     } finally {
       setLoading(false)
@@ -142,13 +145,13 @@ export default function NewHuntModelPage() {
         <Link href="/admin/models">
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזור
+            {t('common.back', language)}
           </Button>
         </Link>
-        
+
         <div>
-          <h1 className="text-3xl font-bold text-white">מודל ציד חדש</h1>
-          <p className="text-gray-300">צור תבנית חדשה למסע ציד אוצרות</p>
+          <h1 className="text-3xl font-bold text-white">{t('new_model.title', language)}</h1>
+          <p className="text-gray-300">{t('new_model.subtitle', language)}</p>
         </div>
       </div>
 
@@ -156,21 +159,21 @@ export default function NewHuntModelPage() {
         {/* Basic Information */}
         <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader>
-            <CardTitle>מידע בסיסי</CardTitle>
+            <CardTitle>{t('new_model.basic_info', language)}</CardTitle>
             <CardDescription className="text-gray-400">
-              הגדר את השם, התיאור והשפה של המודל
+              {t('new_model.basic_info_description', language)}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Name */}
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-white">שם המודל *</Label>
+              <Label htmlFor="name" className="text-white">{t('new_model.model_name', language)}</Label>
               <Input
                 id="name"
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="למשל: ציד ריגול לגילאי 7-9"
+                placeholder={t('new_model.name_placeholder', language)}
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400"
                 disabled={loading}
               />
@@ -181,18 +184,18 @@ export default function NewHuntModelPage() {
 
             {/* Description */}
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-white">תיאור</Label>
+              <Label htmlFor="description" className="text-white">{t('new_model.description_label', language)}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="תאר את המודל, קהל היעד, וההתאמות המיוחדות..."
+                placeholder={t('new_model.description_placeholder', language)}
                 rows={4}
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400 resize-none"
                 disabled={loading}
               />
               <div className="flex justify-between text-xs text-gray-400">
-                <span>תיאור אופציונלי שיעזור לזהות את המודל</span>
+                <span>{t('new_model.description_help', language)}</span>
                 <span>{formData.description.length}/500</span>
               </div>
               {errors.description && (
@@ -202,7 +205,7 @@ export default function NewHuntModelPage() {
 
             {/* Language */}
             <div className="space-y-2">
-              <Label className="text-white">שפה</Label>
+              <Label className="text-white">{t('new_model.language_label', language)}</Label>
               <div className="flex gap-2">
                 <button
                   type="button"
@@ -214,7 +217,7 @@ export default function NewHuntModelPage() {
                   }`}
                   disabled={loading}
                 >
-                  עברית
+                  {t('common.hebrew', language)}
                 </button>
                 <button
                   type="button"
@@ -226,14 +229,14 @@ export default function NewHuntModelPage() {
                   }`}
                   disabled={loading}
                 >
-                  English
+                  {t('common.english', language)}
                 </button>
               </div>
             </div>
 
             {/* Status */}
             <div className="space-y-2">
-              <Label className="text-white">סטטוס</Label>
+              <Label className="text-white">{t('new_model.status_label', language)}</Label>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -249,14 +252,14 @@ export default function NewHuntModelPage() {
                     }`}
                   />
                 </button>
-                <Badge 
+                <Badge
                   variant={formData.active ? "default" : "secondary"}
                   className={formData.active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-gray-500/20 text-gray-400 border-gray-500/30"}
                 >
-                  {formData.active ? 'פעיל' : 'לא פעיל'}
+                  {formData.active ? t('common.active', language) : t('common.inactive', language)}
                 </Badge>
                 <span className="text-gray-400 text-sm">
-                  {formData.active ? 'המודל יהיה זמין לשימוש' : 'המודל לא יהיה זמין לשימוש'}
+                  {formData.active ? t('new_model.active_description', language) : t('new_model.inactive_description', language)}
                 </span>
               </div>
             </div>
@@ -268,10 +271,10 @@ export default function NewHuntModelPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5 text-spy-gold" />
-              השלבים הבאים
+              {t('new_model.next_steps', language)}
             </CardTitle>
             <CardDescription className="text-gray-400">
-              לאחר יצירת המודל תוכל להוסיף תוכן
+              {t('new_model.next_steps_description', language)}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -279,24 +282,24 @@ export default function NewHuntModelPage() {
               <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
                 <MapPin className="w-5 h-5 text-spy-gold" />
                 <div>
-                  <h4 className="font-medium">הוסף עמדות</h4>
-                  <p className="text-sm text-gray-400">צור עמדות שונות עם פעילויות והוראות</p>
+                  <h4 className="font-medium">{t('new_model.add_stations', language)}</h4>
+                  <p className="text-sm text-gray-400">{t('new_model.add_stations_description', language)}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
                 <Users className="w-5 h-5 text-spy-gold" />
                 <div>
-                  <h4 className="font-medium">הגדר משימות</h4>
-                  <p className="text-sm text-gray-400">צור משימות שמקשרות בין העמדות</p>
+                  <h4 className="font-medium">{t('new_model.setup_missions', language)}</h4>
+                  <p className="text-sm text-gray-400">{t('new_model.setup_missions_description', language)}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
                 <Video className="w-5 h-5 text-spy-gold" />
                 <div>
-                  <h4 className="font-medium">הוסף תבניות וידאו</h4>
-                  <p className="text-sm text-gray-400">צור תבניות לסרטוני משימות</p>
+                  <h4 className="font-medium">{t('new_model.add_video_templates', language)}</h4>
+                  <p className="text-sm text-gray-400">{t('new_model.add_video_templates_description', language)}</p>
                 </div>
               </div>
             </div>
@@ -313,12 +316,12 @@ export default function NewHuntModelPage() {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
-                יוצר מודל...
+                {t('new_model.creating_model', language)}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4 mr-2" />
-                צור מודל
+                {t('new_model.create_model', language)}
               </>
             )}
           </Button>
@@ -330,7 +333,7 @@ export default function NewHuntModelPage() {
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               disabled={loading}
             >
-              ביטול
+              {t('common.cancel', language)}
             </Button>
           </Link>
         </div>

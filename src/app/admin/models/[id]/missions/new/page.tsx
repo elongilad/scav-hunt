@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { createMission, getStations } from '@/lib/actions/missions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -12,9 +11,10 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ArrowLeft, Save, Users, MapPin, Video, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { useLanguage } from '@/contexts/LanguageContext'
+import { t } from '@/lib/i18n'
 
 interface FormData {
-  to_station_id: string
   title: string
   clue: {
     text: string
@@ -55,8 +55,8 @@ interface PageProps {
 
 export default function NewMissionPage({ params }: PageProps) {
   const { id } = use(params)
+  const { language } = useLanguage()
   const [formData, setFormData] = useState<FormData>({
-    to_station_id: '',
     title: '',
     clue: {
       text: '',
@@ -77,54 +77,21 @@ export default function NewMissionPage({ params }: PageProps) {
     active: true
   })
   
-  const [stations, setStations] = useState<Station[]>([])
   const [videoTemplates, setVideoTemplates] = useState<MediaAsset[]>([])
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   
-  const router = useRouter()
-  const supabase = createClient()
-
   useEffect(() => {
-    loadStations()
     loadVideoTemplates()
   }, [])
 
-  const loadStations = async () => {
-    try {
-      const { data: stations } = await supabase
-        .from('model_stations')
-        .select('id, display_name, type')
-        .eq('model_id', id)
-        .order('display_name')
-
-      setStations(stations || [])
-    } catch (error) {
-      console.error('Error loading stations:', error)
-    }
-  }
+  // Note: Stations are no longer part of models
 
   const loadVideoTemplates = async () => {
     try {
-      // Get user's org to filter video templates
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: orgs } = await supabase
-        .from('org_members')
-        .select('org_id')
-        .eq('user_id', user.id)
-
-      if (!orgs || orgs.length === 0) return
-
-      const { data: templates } = await supabase
-        .from('media_assets')
-        .select('id, storage_path, meta')
-        .eq('kind', 'video')
-        .in('org_id', orgs.map(org => org.org_id))
-        .order('created_at', { ascending: false })
-
-      setVideoTemplates(templates as any || [])
+      // TODO: Create server action for video templates to avoid RLS issues
+      // For now, skip loading video templates
+      setVideoTemplates([])
     } catch (error) {
       console.error('Error loading video templates:', error)
     }
@@ -132,19 +99,15 @@ export default function NewMissionPage({ params }: PageProps) {
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
-    
-    if (!formData.to_station_id) {
-      newErrors.to_station_id = 'יש לבחור עמדת יעד'
-    }
-    
+
     if (!formData.title.trim()) {
-      newErrors.title = 'כותרת המשימה נדרשת'
+      newErrors.title = t('mission_form.mission_title_required_error', language)
     }
-    
+
     if (!formData.clue.text.trim()) {
-      newErrors.clue_text = 'טקסט הרמז נדרש'
+      newErrors.clue_text = t('mission_form.clue_text_required_error', language)
     }
-    
+
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -157,28 +120,30 @@ export default function NewMissionPage({ params }: PageProps) {
     setLoading(true)
     
     try {
-      // Create mission
-      const { error } = await supabase
-        .from('model_missions')
-        .insert({
-          model_id: id,
-          to_station_id: formData.to_station_id,
-          title: formData.title.trim(),
-          clue: formData.clue,
-          video_template_id: formData.video_template_id,
-          overlay_spec: formData.overlay_spec,
-          locale: formData.locale,
-          active: formData.active
-        })
+      const result = await createMission({
+        model_id: id,
+        title: formData.title,
+        clue: formData.clue,
+        video_template_id: formData.video_template_id,
+        overlay_spec: formData.overlay_spec,
+        locale: formData.locale,
+        active: formData.active
+      })
 
-      if (error) throw error
+      if (result?.error) {
+        setErrors({ submit: result.error })
+        return
+      }
 
-      // Redirect back to model detail page
-      router.push(`/admin/models/${id}`)
-      
+      // Success - server action will redirect automatically
+
     } catch (error: any) {
       console.error('Error creating mission:', error)
-      setErrors({ submit: error.message || 'שגיאה ביצירת המשימה' })
+      // Don't show NEXT_REDIRECT as an error since it's expected behavior
+      if (error.message === 'NEXT_REDIRECT') {
+        return
+      }
+      setErrors({ submit: error.message || t('mission_form.create_error', language) })
     } finally {
       setLoading(false)
     }
@@ -203,7 +168,6 @@ export default function NewMissionPage({ params }: PageProps) {
     }
   }
 
-  const selectedStation = stations.find(s => s.id === formData.to_station_id)
   const selectedTemplate = videoTemplates.find(t => t.id === formData.video_template_id)
 
   return (
@@ -213,13 +177,13 @@ export default function NewMissionPage({ params }: PageProps) {
         <Link href={`/admin/models/${id}`}>
           <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזור למודל
+            {t('mission_form.back_to_model', language)}
           </Button>
         </Link>
         
         <div>
-          <h1 className="text-3xl font-bold text-white">משימה חדשה</h1>
-          <p className="text-gray-300">צור משימה שמובילה לעמדה במודל הציד</p>
+          <h1 className="text-3xl font-bold text-white">{t('mission_form.new_mission', language)}</h1>
+          <p className="text-gray-300">{t('mission_form.create_mission_in_model', language)}</p>
         </div>
       </div>
 
@@ -229,64 +193,28 @@ export default function NewMissionPage({ params }: PageProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-spy-gold" />
-              מידע בסיסי
+              {t('mission_form.basic_info', language)}
             </CardTitle>
             <CardDescription className="text-gray-400">
-              הגדר את יעד המשימה וכותרת
+              {t('mission_form.set_mission_title', language)}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Target Station */}
-            <div className="space-y-2">
-              <Label className="text-white">עמדת יעד *</Label>
-              <Select
-                value={formData.to_station_id}
-                onValueChange={(value) => handleInputChange('to_station_id', value)}
-                disabled={loading}
-              >
-                <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                  <SelectValue placeholder="בחר עמדת יעד" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-600">
-                  {stations.map((station) => (
-                    <SelectItem key={station.id} value={station.id} className="text-white hover:bg-gray-700">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-spy-gold" />
-                        <div>
-                          <div className="font-medium">{station.display_name}</div>
-                          <div className="text-xs text-gray-400">{station.id} • {station.type}</div>
-                        </div>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {selectedStation && (
-                <div className="p-3 bg-spy-gold/10 border border-spy-gold/20 rounded-lg">
-                  <p className="text-spy-gold text-sm">
-                    המשימה תוביל לעמדה: {selectedStation.display_name}
-                  </p>
-                </div>
-              )}
-              {errors.to_station_id && (
-                <p className="text-red-400 text-sm">{errors.to_station_id}</p>
-              )}
-            </div>
 
             {/* Mission Title */}
             <div className="space-y-2">
-              <Label htmlFor="title" className="text-white">כותרת המשימה *</Label>
+              <Label htmlFor="title" className="text-white">{t('mission_form.mission_title_required', language)}</Label>
               <Input
                 id="title"
                 type="text"
                 value={formData.title}
                 onChange={(e) => handleInputChange('title', e.target.value)}
-                placeholder={selectedStation ? `לך ל-${selectedStation.display_name}` : "למשל: לך לגן ויצו"}
+                placeholder={t('mission_form.mission_title_placeholder', language)}
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400"
                 disabled={loading}
               />
               <p className="text-xs text-gray-400">
-                כותרת קצרה שתופיע בסרטון המשימה
+                {t('mission_form.short_title_description', language)}
               </p>
               {errors.title && (
                 <p className="text-red-400 text-sm">{errors.title}</p>
@@ -296,7 +224,7 @@ export default function NewMissionPage({ params }: PageProps) {
             {/* Language and Status */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-white">שפה</Label>
+                <Label className="text-white">{t('mission_form.language', language)}</Label>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -308,7 +236,7 @@ export default function NewMissionPage({ params }: PageProps) {
                     }`}
                     disabled={loading}
                   >
-                    עברית
+                    {t('mission_form.hebrew', language)}
                   </button>
                   <button
                     type="button"
@@ -320,13 +248,13 @@ export default function NewMissionPage({ params }: PageProps) {
                     }`}
                     disabled={loading}
                   >
-                    English
+                    {t('mission_form.english', language)}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-white">סטטוס</Label>
+                <Label className="text-white">{t('mission_form.status', language)}</Label>
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
@@ -346,7 +274,7 @@ export default function NewMissionPage({ params }: PageProps) {
                     variant={formData.active ? "default" : "secondary"}
                     className={formData.active ? "bg-green-500/20 text-green-400 border-green-500/30" : "bg-gray-500/20 text-gray-400 border-gray-500/30"}
                   >
-                    {formData.active ? 'פעיל' : 'לא פעיל'}
+                    {formData.active ? t('missions.active', language) : t('missions.inactive', language)}
                   </Badge>
                 </div>
               </div>
@@ -359,27 +287,27 @@ export default function NewMissionPage({ params }: PageProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Eye className="w-5 h-5 text-spy-gold" />
-              תוכן הרמז
+              {t('mission_form.clue_content', language)}
             </CardTitle>
             <CardDescription className="text-gray-400">
-              הרמז שיוביל את הקבוצות לעמדה הבאה
+              {t('mission_form.clue_description', language)}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Main Clue Text */}
             <div className="space-y-2">
-              <Label htmlFor="clue_text" className="text-white">טקסט הרמז *</Label>
+              <Label htmlFor="clue_text" className="text-white">{t('mission_form.clue_text_required', language)}</Label>
               <Textarea
                 id="clue_text"
                 value={formData.clue.text}
                 onChange={(e) => handleClueChange('text', e.target.value)}
-                placeholder="הרמז שיוביל לעמדה הבאה..."
+                placeholder={t('mission_form.clue_placeholder', language)}
                 rows={3}
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400 resize-none"
                 disabled={loading}
               />
               <p className="text-xs text-gray-400">
-                הרמז הראשי שיופיע במשימה
+                {t('mission_form.main_clue_description', language)}
               </p>
               {errors.clue_text && (
                 <p className="text-red-400 text-sm">{errors.clue_text}</p>
@@ -388,18 +316,18 @@ export default function NewMissionPage({ params }: PageProps) {
 
             {/* Optional Hint */}
             <div className="space-y-2">
-              <Label htmlFor="hint" className="text-white">רמז נוסף</Label>
+              <Label htmlFor="hint" className="text-white">{t('mission_form.additional_hint', language)}</Label>
               <Textarea
                 id="hint"
                 value={formData.clue.hint || ''}
                 onChange={(e) => handleClueChange('hint', e.target.value)}
-                placeholder="רמז נוסף שיעזור אם הקבוצה תתקע..."
+                placeholder={t('mission_form.additional_hint_placeholder', language)}
                 rows={2}
                 className="bg-white/10 border-white/20 text-white placeholder-gray-400 resize-none"
                 disabled={loading}
               />
               <p className="text-xs text-gray-400">
-                רמז אופציונלי למקרה שהקבוצה תתקע
+                {t('mission_form.optional_hint_description', language)}
               </p>
             </div>
           </CardContent>
@@ -410,26 +338,26 @@ export default function NewMissionPage({ params }: PageProps) {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Video className="w-5 h-5 text-spy-gold" />
-              תבנית וידאו
+              {t('mission_form.video_template', language)}
             </CardTitle>
             <CardDescription className="text-gray-400">
-              בחר תבנית וידאו למשימה (אופציונלי)
+              {t('mission_form.video_template_description', language)}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-white">תבנית וידאו</Label>
+              <Label className="text-white">{t('mission_form.video_template', language)}</Label>
               <Select
                 value={formData.video_template_id || 'none'}
                 onValueChange={(value) => handleInputChange('video_template_id', value === 'none' ? null : value)}
                 disabled={loading}
               >
                 <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                  <SelectValue placeholder="בחר תבנית וידאו" />
+                  <SelectValue placeholder={t('mission_form.video_template_description', language)} />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
                   <SelectItem value="none" className="text-white hover:bg-gray-700">
-                    ללא תבנית וידאו
+                    {t('mission_form.no_video_template', language)}
                   </SelectItem>
                   {videoTemplates.map((template) => (
                     <SelectItem key={template.id} value={template.id} className="text-white hover:bg-gray-700">
@@ -447,12 +375,12 @@ export default function NewMissionPage({ params }: PageProps) {
               {selectedTemplate && (
                 <div className="p-3 bg-spy-gold/10 border border-spy-gold/20 rounded-lg">
                   <p className="text-spy-gold text-sm">
-                    תבנית נבחרת: {selectedTemplate.storage_path.split('/').pop()}
+                    {t('mission_form.template_selected', language)}: {selectedTemplate.storage_path.split('/').pop()}
                   </p>
                 </div>
               )}
               <p className="text-xs text-gray-400">
-                אם לא נבחרה תבנית, המשימה תוצג כטקסט בלבד
+                {t('mission_form.no_template_description', language)}
               </p>
             </div>
           </CardContent>
@@ -462,18 +390,18 @@ export default function NewMissionPage({ params }: PageProps) {
         <div className="flex gap-4 pt-4">
           <Button
             type="submit"
-            disabled={loading || stations.length === 0}
+            disabled={loading}
             className="flex-1 bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold"
           >
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin mr-2" />
-                יוצר משימה...
+                {t('mission_form.creating_mission', language)}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4 mr-2" />
-                צור משימה
+                {t('mission_form.create_mission', language)}
               </>
             )}
           </Button>
@@ -485,19 +413,11 @@ export default function NewMissionPage({ params }: PageProps) {
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
               disabled={loading}
             >
-              ביטול
+              {t('mission_form.cancel', language)}
             </Button>
           </Link>
         </div>
 
-        {/* No Stations Warning */}
-        {stations.length === 0 && (
-          <div className="p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
-            <p className="text-yellow-400 text-sm">
-              אין עמדות במודל זה. יש ליצור עמדות לפני יצירת משימות.
-            </p>
-          </div>
-        )}
 
         {/* Submit Error */}
         {errors.submit && (

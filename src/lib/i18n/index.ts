@@ -1,3 +1,5 @@
+export type Language = 'he' | 'en'
+
 export interface Locale {
   code: string
   name: string

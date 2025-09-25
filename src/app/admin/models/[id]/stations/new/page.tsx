@@ -2,7 +2,7 @@
 
 import { useState, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { createStation } from '@/lib/actions/stations'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -60,7 +60,6 @@ export default function NewStationPage({ params }: PageProps) {
   const [propsInput, setPropsInput] = useState('')
   
   const router = useRouter()
-  const supabase = createClient()
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {}
@@ -93,11 +92,11 @@ export default function NewStationPage({ params }: PageProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
-    
+
     setLoading(true)
-    
+
     try {
       // Parse props from comma-separated string
       const props_needed = propsInput
@@ -105,33 +104,37 @@ export default function NewStationPage({ params }: PageProps) {
         .map(prop => prop.trim())
         .filter(prop => prop.length > 0)
 
-      // Create station
-      const { error } = await supabase
-        .from('model_stations')
-        .insert({
-          id: formData.id.trim(),
-          model_id: id,
-          display_name: formData.display_name.trim(),
-          type: formData.type,
-          default_activity: {
-            ...formData.default_activity,
-            props_needed
-          }
-        })
-
-      if (error) {
-        if (error.code === '23505') { // Unique constraint violation
-          setErrors({ id: 'מזהה העמדה כבר קיים' })
-          return
+      // Create station using server action
+      const result = await createStation({
+        id: formData.id.trim(),
+        model_id: id,
+        display_name: formData.display_name.trim(),
+        type: formData.type,
+        default_activity: {
+          ...formData.default_activity,
+          props_needed
         }
-        throw error
+      })
+
+      if (result?.error) {
+        // Handle specific errors
+        if (result.error.includes('כבר קיים')) {
+          setErrors({ id: result.error })
+        } else {
+          setErrors({ submit: result.error })
+        }
+        return
       }
 
-      // Redirect back to model detail page
-      router.push(`/admin/models/${id}`)
-      
+      // Success - server action will redirect automatically
+
     } catch (error: any) {
       console.error('Error creating station:', error)
+      // Don't show NEXT_REDIRECT as an error since it's expected behavior
+      if (error.message === 'NEXT_REDIRECT') {
+        // This is normal - the redirect is working
+        return
+      }
       setErrors({ submit: error.message || 'שגיאה ביצירת העמדה' })
     } finally {
       setLoading(false)

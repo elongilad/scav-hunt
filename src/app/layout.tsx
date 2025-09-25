@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "@/components/LanguageProvider";
-import { FloatingLanguageSwitcher } from "@/components/LanguageSwitcher";
+// Note: Language provider is now handled at admin level only
 
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
@@ -71,10 +70,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
       <body className={`${inter.variable} font-hebrew antialiased`}>
-        <LanguageProvider>
-          <div id="root">{children}</div>
-          <FloatingLanguageSwitcher />
-        </LanguageProvider>
+        <div id="root">{children}</div>
       </body>
     </html>
   );

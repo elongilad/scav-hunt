@@ -54,11 +54,11 @@ create table model_stations (
   created_at timestamptz default now()
 );
 
--- Missions (reusable "dispatches to DEST")
+-- Missions (reusable "dispatches" - destinations assigned at event level)
 create table model_missions (
   id uuid primary key default gen_random_uuid(),
   model_id uuid references hunt_models(id) on delete cascade,
-  to_station_id text not null references model_stations(id) on delete cascade,
+  to_station_id text references model_stations(id) on delete cascade, -- nullable since stations assigned at event level
   title text,                         -- "Head to Gan Wizo"
   clue jsonb,                         -- richtext JSON for overlays or text
   video_template_id uuid references media_assets(id), -- template intro/outro
