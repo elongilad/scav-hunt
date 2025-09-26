@@ -10,7 +10,7 @@ import { Plus, Settings, Users, Video, MapPin } from 'lucide-react'
 interface DashboardPageClientProps {
   user: {
     id: string
-    email: string | undefined
+    email?: string | undefined
   }
   orgs: any[]
   events: any[]
