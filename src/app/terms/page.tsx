@@ -19,7 +19,7 @@ export default function TermsPage() {
               Back to Home
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Terms of Service</h1>
+          <span className="text-2xl font-bold text-white">Terms of Service</span>
         </div>
       </header>
 

@@ -5,16 +5,15 @@ import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 // Language functionality removed for static generation
 // import { useLanguage, useRTL } from '@/components/LanguageProvider'
 // import LanguageSwitcher from '@/components/LanguageSwitcher'
-import { signUpWithEmail } from '@/app/auth/actions'
 import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -30,22 +29,13 @@ export default function LoginPage() {
     setMessage('')
 
     try {
-      if (isSignUp) {
-        const result = await signUpWithEmail(email, password)
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
 
-        if (!result.success) {
-          throw new Error(result.message)
-        }
-        setMessage(result.message)
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        })
-        
-        if (error) throw error
-        router.push('/dashboard')
-      }
+      if (error) throw error
+      router.push('/dashboard')
     } catch (error: any) {
       console.error('Auth error:', error)
 
@@ -80,11 +70,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-spy-dark via-gray-900 to-black p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-sky via-white to-blue-50 p-4 relative">
       {/* Back Button */}
       <button
         onClick={() => router.push('/')}
-        className="absolute top-6 left-6 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-lg rounded-full border border-white/20 text-white transition-colors z-10"
+        className="absolute top-6 left-6 p-3 bg-white/70 hover:bg-white/90 backdrop-blur-lg rounded-full border border-brand-teal/20 text-brand-navy transition-colors z-10 shadow-lg"
         aria-label="Back to home"
       >
         <ArrowLeft className="w-5 h-5" />
@@ -96,24 +86,24 @@ export default function LoginPage() {
           {/* Language switcher removed for static generation */}
         </div>
 
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20 relative">
+        <Card className="bg-white/90 backdrop-blur-lg border-brand-teal/20 shadow-xl relative">
           {/* Close Button */}
           <button
             onClick={() => router.push('/')}
-            className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
+            className="absolute top-4 right-4 p-2 hover:bg-brand-navy/5 rounded-full text-gray-600 hover:text-brand-navy transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-spy-gold/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🕵️</span>
+            <div className="w-16 h-16 bg-brand-teal/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">🗺️</span>
             </div>
-            <CardTitle className="text-3xl font-bold text-white hebrew-title mb-2">
+            <CardTitle className="text-3xl font-bold text-brand-navy font-display mb-2">
               Welcome Back
             </CardTitle>
-            <CardDescription className="text-gray-300 hebrew-body">
-              Sign in to your account to continue
+            <CardDescription className="text-gray-700">
+              Sign in to your BuildaQuest account
             </CardDescription>
           </CardHeader>
 
@@ -123,12 +113,12 @@ export default function LoginPage() {
               <div>
                 <label 
                   htmlFor="email" 
-                  className={`block text-sm font-medium text-gray-300 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
+                  className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
                 >
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className={`absolute top-3 w-5 h-5 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                  <Mail className={`absolute top-3 w-5 h-5 text-gray-500 ${isRTL ? 'right-3' : 'left-3'}`} />
                   <input
                     id="email"
                     type="email"
@@ -136,8 +126,8 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className={`
-                      w-full py-3 bg-white/10 border border-white/20 rounded-lg text-white 
-                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spy-gold 
+                      w-full py-3 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy 
+                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal 
                       focus:border-transparent
                       ${isRTL ? 'pr-10 pl-4 text-right' : 'pl-10 pr-4 text-left'}
                     `}
@@ -149,12 +139,12 @@ export default function LoginPage() {
               <div>
                 <label 
                   htmlFor="password" 
-                  className={`block text-sm font-medium text-gray-300 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
+                  className={`block text-sm font-medium text-gray-700 mb-2 ${isRTL ? 'text-right' : 'text-left'}`}
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className={`absolute top-3 w-5 h-5 text-gray-400 ${isRTL ? 'right-3' : 'left-3'}`} />
+                  <Lock className={`absolute top-3 w-5 h-5 text-gray-500 ${isRTL ? 'right-3' : 'left-3'}`} />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
@@ -162,8 +152,8 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     className={`
-                      w-full py-3 bg-white/10 border border-white/20 rounded-lg text-white 
-                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-spy-gold 
+                      w-full py-3 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy 
+                      placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal 
                       focus:border-transparent
                       ${isRTL ? 'pr-10 pl-10 text-right' : 'pl-10 pr-10 text-left'}
                     `}
@@ -172,7 +162,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className={`absolute top-3 text-gray-400 hover:text-white ${isRTL ? 'left-3' : 'right-3'}`}
+                    className={`absolute top-3 text-gray-500 hover:text-brand-navy ${isRTL ? 'left-3' : 'right-3'}`}
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -182,7 +172,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold h-12 hebrew-body"
+                className="w-full bg-brand-teal hover:bg-brand-teal/90 text-brand-navy font-semibold h-12"
               >
                 {loading ? (
                   <>
@@ -190,7 +180,7 @@ export default function LoginPage() {
                     Signing In...
                   </>
                 ) : (
-                  isSignUp ? 'Create Account' : 'Sign In'
+                  'Sign In'
                 )}
               </Button>
             </form>
@@ -199,10 +189,10 @@ export default function LoginPage() {
             <div className="space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/20" />
+                  <div className="w-full border-t border-brand-teal/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className={`px-4 bg-gradient-to-br from-spy-dark via-gray-900 to-black text-gray-400 hebrew-body ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <span className={`px-4 bg-gradient-to-br from-brand-navy via-slate-800 to-slate-900 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
                     or continue with
                   </span>
                 </div>
@@ -213,7 +203,7 @@ export default function LoginPage() {
                 variant="outline"
                 onClick={handleGoogleSignIn}
                 className={`
-                  w-full bg-white/10 border-white/20 text-white hover:bg-white/20 h-12
+                  w-full bg-white/70 border-brand-teal/20 text-brand-navy hover:bg-white/20 h-12
                   ${isRTL ? 'flex-row-reverse' : 'flex-row'}
                 `}
               >
@@ -239,22 +229,21 @@ export default function LoginPage() {
               </Button>
             </div>
 
-            {/* Toggle Sign Up/In */}
+            {/* Link to Sign Up */}
             <div className="text-center">
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                className="text-spy-gold hover:text-spy-gold/80 text-sm hebrew-body"
+              <Link
+                href="/auth/signup"
+                className="text-brand-teal hover:text-brand-teal/80 text-sm"
               >
-                {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-              </button>
+                Don't have an account? Create one
+              </Link>
             </div>
 
             {/* Message */}
             {message && (
               <Card className="bg-red-500/20 border-red-500/30">
                 <CardContent className="p-4">
-                  <p className={`text-red-400 text-sm text-center hebrew-body ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <p className={`text-red-400 text-sm text-center ${isRTL ? 'text-right' : 'text-left'}`}>
                     {message}
                   </p>
                 </CardContent>

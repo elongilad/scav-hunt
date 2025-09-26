@@ -12,7 +12,7 @@ export function LanguageToggle() {
       variant="outline"
       size="sm"
       onClick={() => setLanguage(language === 'he' ? 'en' : 'he')}
-      className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+      className="border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5"
     >
       <Languages className="w-4 h-4 mr-2" />
       {language === 'he' ? 'עברית' : 'English'}

@@ -19,7 +19,7 @@ export default function PrivacyPage() {
               Back to Home
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-white">Privacy Policy</h1>
+          <span className="text-2xl font-bold text-white">Privacy Policy</span>
         </div>
       </header>
 

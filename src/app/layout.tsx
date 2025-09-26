@@ -1,33 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-// Note: Language provider is now handled at admin level only
-
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-inter",
-});
+import { inter, poppins } from "./fonts";
 
 export const metadata: Metadata = {
-  title: "Khapesethamatmon - Spy Scavenger Hunt Platform",
-  description: "Self-serve platform for creating and running spy-themed scavenger hunts with QR codes, video missions, and real-time tracking.",
-  keywords: ["scavenger hunt", "spy games", "QR codes", "events", "kids activities"],
-  authors: [{ name: "Khapesethamatmon Team" }],
-  creator: "Khapesethamatmon",
-  publisher: "Khapesethamatmon",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://your-domain.com"),
+  title: "BuildaQuest — Turn any place into a quest",
+  description: "Create and run interactive scavenger hunts with QR codes, videos, and real-time tracking.",
+  keywords: ["scavenger hunt", "quest", "QR codes", "interactive", "team building"],
+  authors: [{ name: "BuildaQuest Team" }],
+  creator: "BuildaQuest",
+  publisher: "BuildaQuest",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
   openGraph: {
-    title: "Khapesethamatmon - Spy Scavenger Hunt Platform",
-    description: "Create immersive spy-themed scavenger hunts with custom videos, QR codes, and real-time tracking.",
+    title: "BuildaQuest",
+    description: "Turn any place into a quest.",
     type: "website",
     locale: "en_US",
-    alternateLocale: ["he_IL"],
+    images: ["/og/home-1200x630.png"],
   },
+  icons: [
+    { rel: "icon", url: "/favicon.ico", sizes: "any" },
+    { rel: "icon", type: "image/png", sizes: "16x16", url: "/favicon-16x16.png" },
+    { rel: "icon", type: "image/png", sizes: "32x32", url: "/favicon-32x32.png" },
+    { rel: "icon", type: "image/png", sizes: "96x96", url: "/favicon-96x96.png" },
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png" },
+    { rel: "shortcut icon", url: "/favicon.ico" }
+  ],
+  manifest: "/manifest.json",
   robots: {
     index: true,
     follow: true,
@@ -45,6 +48,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  themeColor: '#10B7D4',
 };
 
 export default function RootLayout({
@@ -53,24 +57,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" dir="ltr">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@100..900&family=Assistant:wght@200..800&display=swap"
-          rel="stylesheet"
-        />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
-        <meta name="theme-color" content="#D4AF37" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      </head>
-      <body className={`${inter.variable} font-hebrew antialiased`}>
-        <div id="root">{children}</div>
+    <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <body className="bg-white text-slate-900 antialiased">
+        {children}
       </body>
     </html>
   );

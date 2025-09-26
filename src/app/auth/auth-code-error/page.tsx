@@ -5,7 +5,7 @@ import { ArrowLeft, AlertCircle, RefreshCw } from 'lucide-react'
 
 export default function AuthCodeErrorPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-spy-dark via-gray-900 to-black flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-brand-navy via-slate-800 to-slate-900 flex items-center justify-center">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto text-center">
           <Card className="bg-white/10 backdrop-blur-lg border-white/20 text-white">
@@ -39,7 +39,7 @@ export default function AuthCodeErrorPage() {
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/auth/login">
-                    <Button size="lg" className="bg-spy-gold hover:bg-spy-gold/90 text-black font-semibold">
+                    <Button size="lg" className="bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold">
                       <RefreshCw className="w-5 h-5 mr-2" />
                       Try Again
                     </Button>
@@ -58,7 +58,7 @@ export default function AuthCodeErrorPage() {
                     Still having trouble?
                   </p>
                   <Link href="/contact">
-                    <Button variant="ghost" className="text-spy-gold hover:text-spy-gold/80">
+                    <Button variant="ghost" className="text-brand-teal hover:text-brand-teal/80">
                       Contact Support
                     </Button>
                   </Link>

@@ -44,47 +44,47 @@ export default function AdminDashboard({ stats, huntModels }: AdminDashboardProp
 
   return (
     <div className="p-6 space-y-8">
-      {/* Header with Language Toggle */}
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-white">{t('admin.title', language)}</h1>
+        <h1 className="text-2xl font-bold text-white font-display">{t('admin.title', language)}</h1>
         <LanguageToggle />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('admin.models', language)}</CardTitle>
-            <Map className="h-4 w-4 text-muted-foreground" />
+            <Map className="h-4 w-4 text-brand-teal" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.huntModels}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-brand-teal">{stats.huntModels}</div>
+            <p className="text-xs text-gray-400">
               {stats.activeModels} {t('admin.active', language)}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('admin.media', language)}</CardTitle>
-            <Image className="h-4 w-4 text-muted-foreground" />
+            <Image className="h-4 w-4 text-brand-teal" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.mediaAssets}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-brand-teal">{stats.mediaAssets}</div>
+            <p className="text-xs text-gray-400">
               {stats.videoAssets} {t('admin.videos', language)}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/10 border-white/20 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{t('admin.events', language)}</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-brand-teal" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.recentEvents}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-brand-teal">{stats.recentEvents}</div>
+            <p className="text-xs text-gray-400">
               {stats.activeEvents} {t('admin.active', language)}
             </p>
           </CardContent>
@@ -92,9 +92,9 @@ export default function AdminDashboard({ stats, huntModels }: AdminDashboardProp
       </div>
 
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{t('admin.recent_models', language)}</h2>
+        <h2 className="text-lg font-semibold text-white">{t('admin.recent_models', language)}</h2>
         <Link href="/admin/models/new">
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2 bg-brand-teal hover:bg-brand-teal/90 text-white">
             <Plus className="h-4 w-4" />
             {t('admin.new_model', language)}
           </Button>
@@ -112,7 +112,7 @@ export default function AdminDashboard({ stats, huntModels }: AdminDashboardProp
                 <h3 className="font-medium text-white">{model.name}</h3>
                 <Badge
                   variant={model.active ? 'default' : 'secondary'}
-                  className={model.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}
+                  className={model.active ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'}
                 >
                   {model.active ? t('admin.ready', language) : t('admin.draft', language)}
                 </Badge>

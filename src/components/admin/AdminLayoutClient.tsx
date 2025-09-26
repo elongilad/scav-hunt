@@ -34,21 +34,21 @@ function AdminLayoutContent({ children, user, orgs }: AdminLayoutClientProps) {
   const { language } = useLanguage()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-spy-dark via-gray-900 to-black">
+    <div className="min-h-screen bg-gradient-to-br from-brand-sky via-white to-blue-50">
       {/* Navigation */}
-      <nav className="border-b border-white/20 bg-white/5 backdrop-blur-lg">
+      <nav className="border-b border-brand-teal/20 bg-white/70 backdrop-blur-lg shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-6">
-              <Link href="/dashboard" className="flex items-center space-x-2 text-white hover:text-spy-gold">
+              <Link href="/dashboard" className="flex items-center space-x-2 text-brand-navy hover:text-brand-teal">
                 <Home className="w-5 h-5" />
                 <span>{t('admin.back_to_dashboard', language)}</span>
               </Link>
 
-              <div className="w-px h-6 bg-white/20" />
+              <div className="w-px h-6 bg-brand-teal/20" />
 
-              <h1 className="text-xl font-bold text-white">
-                🕵️ {t('admin.title', language)}
+              <h1 className="text-xl font-bold text-brand-navy font-display">
+                🗺️ {t('admin.title', language)}
               </h1>
             </div>
 
@@ -57,8 +57,8 @@ function AdminLayoutContent({ children, user, orgs }: AdminLayoutClientProps) {
               <span className="text-gray-300 text-sm">
                 {user.email}
               </span>
-              <div className="w-8 h-8 bg-spy-gold rounded-full flex items-center justify-center">
-                <span className="text-black font-semibold text-sm">
+              <div className="w-8 h-8 bg-brand-teal rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">
                   {user.email?.charAt(0).toUpperCase()}
                 </span>
               </div>

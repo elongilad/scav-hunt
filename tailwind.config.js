@@ -42,18 +42,30 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        brand: {
+          navy: "#163B5A",
+          teal: "#10B7D4",
+          gold: "#FFB321",
+          sky: "#E6F7FB",
+        },
         spy: {
           dark: "#1a1a1a",
           gold: "#d4af37",
           red: "#c41e3a",
         }
       },
+      boxShadow: {
+        card: "0 8px 24px rgba(22, 59, 90, 0.08)",
+      },
       borderRadius: {
+        xl2: "1.25rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
+        display: ["Poppins", "Inter", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "sans-serif"],
         hebrew: ["Noto Sans Hebrew", "Assistant", "Rubik", "system-ui", "sans-serif"],
       },
       animation: {
