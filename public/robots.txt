@@ -1,0 +1,24 @@
+# robots.txt for BuildaQuest
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+Allow: /demo
+Allow: /pricing
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+
+# Block admin and user areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /api/
+Disallow: /play/
+
+# Block development and build files
+Disallow: /_next/
+Disallow: /static/
+
+# Sitemap location
+Sitemap: https://buildaquest.com/sitemap.xml

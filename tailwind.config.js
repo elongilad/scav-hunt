@@ -43,6 +43,9 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
         brand: {
+          50:'#EFF6FF', 100:'#DBEAFE', 200:'#BFDBFE', 300:'#93C5FD',
+          400:'#60A5FA', 500:'#3B82F6', 600:'#2563EB', 700:'#1D4ED8',
+          800:'#1E40AF', 900:'#1E3A8A',
           navy: "#163B5A",
           teal: "#10B7D4",
           gold: "#FFB321",
@@ -55,13 +58,19 @@ module.exports = {
         }
       },
       boxShadow: {
-        card: "0 8px 24px rgba(22, 59, 90, 0.08)",
+        card: "0 1px 2px rgba(16,24,40,.06), 0 1px 1px rgba(16,24,40,.04)",
+        hover: "0 6px 20px rgba(16,24,40,.10)",
       },
       borderRadius: {
+        xl: "0.75rem",
+        "2xl": "1rem",
         xl2: "1.25rem",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      maxWidth: {
+        "screen-2xl": "1200px",
       },
       fontFamily: {
         display: ["Poppins", "Inter", "system-ui", "sans-serif"],

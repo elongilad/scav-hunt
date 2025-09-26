@@ -16,11 +16,28 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "BuildaQuest",
-    description: "Turn any place into a quest.",
+    title: "BuildaQuest — Turn any place into a quest",
+    description: "Create and run interactive scavenger hunts with QR codes, videos, and real-time tracking.",
     type: "website",
     locale: "en_US",
+    alternateLocale: ["he_IL"],
+    url: process.env.NEXT_PUBLIC_SITE_URL,
+    siteName: "BuildaQuest",
+    images: [
+      {
+        url: "/og/home-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: "BuildaQuest - Turn any place into a quest",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BuildaQuest — Turn any place into a quest",
+    description: "Create and run interactive scavenger hunts with QR codes, videos, and real-time tracking.",
     images: ["/og/home-1200x630.png"],
+    creator: "@buildaquest",
   },
   icons: [
     { rel: "icon", url: "/favicon.ico", sizes: "any" },
@@ -56,8 +73,40 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "BuildaQuest",
+    "description": "Create and run interactive scavenger hunts with QR codes, videos, and real-time tracking.",
+    "url": process.env.NEXT_PUBLIC_SITE_URL || "https://buildaquest.com",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "Web Browser",
+    "offers": {
+      "@type": "Offer",
+      "category": "SaaS"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "BuildaQuest",
+      "url": process.env.NEXT_PUBLIC_SITE_URL || "https://buildaquest.com"
+    },
+    "featureList": [
+      "Interactive scavenger hunts",
+      "QR code generation",
+      "Real-time team tracking",
+      "Video integration",
+      "Multi-language support"
+    ]
+  };
+
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="bg-white text-slate-900 antialiased">
         {children}
       </body>

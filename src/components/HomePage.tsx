@@ -3,56 +3,44 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { HtmlLangUpdater } from "./HtmlLangUpdater";
+import { CookieConsent } from "./CookieConsent";
+import { SkipLink } from "./SkipLink";
+import { ServiceWorkerRegistration } from "./ServiceWorkerRegistration";
+import Hero from "./sections/Hero";
 
 export function HomePage() {
   const { language } = useLanguage();
 
   return (
     <>
+      <HtmlLangUpdater />
+      <ServiceWorkerRegistration />
+      <SkipLink />
       <Header />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden py-20 md:py-28 bg-gradient-to-b from-white to-brand-sky">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h1 className="font-display text-4xl md:text-5xl text-brand-navy leading-tight">
-              {language === 'he' ? 'המסיבה שלך, החידה שלך.' : 'Your party, your '}<span className="text-brand-teal">{language === 'he' ? '' : 'quest'}</span>{language === 'he' ? '' : '.'}
-            </h1>
-            <p className="mt-4 text-lg text-slate-700 max-w-prose">
-              {language === 'he'
-                ? 'BuildaQuest מאפשר לך ליצור הרפתקאות ציד מטמון מותאמות אישית עם תחנות, משימות ומעקב חי של צוותים - בדקות.'
-                : 'BuildaQuest lets you create personalized scavenger hunt adventures with stations, missions, and live team tracking — in minutes.'
-              }
-            </p>
-            <div className="mt-8 flex gap-3">
-              <a href="/auth/signup" className="rounded-lg bg-brand-navy text-white px-5 py-3 hover:opacity-90">
-                {language === 'he' ? 'התחל לבנות' : 'Start Building'}
-              </a>
-              <a href="/demo" className="rounded-lg border border-brand-navy text-brand-navy px-5 py-3 hover:bg-brand-navy/5">
-                {language === 'he' ? 'צפה בדגמה' : 'See Demo'}
-              </a>
-            </div>
-            <div className="mt-6 flex gap-6 text-sm text-slate-600">
-              <div>{language === 'he' ? '🎉 5+ צוותים לאירוע' : '🎉 5+ teams per event'}</div>
-              <div>{language === 'he' ? '🧩 10-20 תחנות' : '🧩 10–20 stations'}</div>
-              <div>{language === 'he' ? '⚡ ניווט חכם' : '⚡ Smart routing'}</div>
-            </div>
-          </div>
-          <div className="relative">
-            <div className="w-full aspect-video bg-gradient-to-br from-brand-sky to-brand-teal/20 rounded-xl2 shadow-card flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🗺️</div>
-                <p className="text-brand-navy font-medium">
-                  {language === 'he' ? 'בונה חידות אינטראקטיבי' : 'Interactive Quest Builder'}
-                </p>
-                <p className="text-slate-600 text-sm mt-1">
-                  {language === 'he' ? 'חזותי בקרוב' : 'Visual coming soon'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <main id="main-content">
+        <Hero
+          title={language === 'he' ? 'המסיבה שלך, החידה שלך.' : 'Your party, your quest.'}
+          subtitle={language === 'he'
+            ? 'BuildaQuest מאפשר לך ליצור הרפתקאות ציד מטמון מותאמות אישית עם תחנות, משימות ומעקב חי של צוותים - בדקות.'
+            : 'BuildaQuest lets you create personalized scavenger hunt adventures with stations, missions, and live team tracking — in minutes.'
+          }
+          primaryCta={{
+            label: language === 'he' ? 'התחל לבנות' : 'Start Building',
+            href: '/auth/signup'
+          }}
+          secondaryCta={{
+            label: language === 'he' ? 'צפה בדגמה' : 'See Demo',
+            href: '/demo'
+          }}
+          metrics={language === 'he'
+            ? '🎉 5+ צוותים לאירוע · 🧩 10-20 תחנות · ⚡ ניווט חכם'
+            : '🎉 5+ teams per event · 🧩 10–20 stations · ⚡ Smart routing'
+          }
+          screenshotSrc="/img/dashboard.png"
+          qrSrc="/img/qr.png"
+        />
 
       {/* HOW IT WORKS */}
       <section id="features" className="py-20 md:py-28">
@@ -105,8 +93,10 @@ export function HomePage() {
           {language === 'he' ? 'התחל לבנות' : 'Start Building'}
         </a>
       </section>
+      </main>
 
       <Footer />
+      <CookieConsent />
     </>
   );
 }
