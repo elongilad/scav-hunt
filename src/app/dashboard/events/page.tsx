@@ -67,4 +67,5 @@ export default async function EventsPage() {
       }}
     />
 
-  )
+  );
+}
