@@ -19,9 +19,8 @@ export function Footer() {
     <footer className="border-t border-slate-100 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 grid gap-8 md:grid-cols-4">
         <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Image src="/favicon.svg" alt="" width={24} height={24} />
-            <span className="font-display text-brand-navy">BuildaQuest</span>
+          <div className="flex items-center">
+            <Image src="/logo-full.svg" alt="BuildaQuest" width={160} height={32} className="h-8" />
           </div>
           <p className="text-sm text-slate-600">
             {language === 'he' ? 'הפוך כל מקום לחידה.' : 'Turn any place into a quest.'}
