@@ -57,15 +57,21 @@ export default function LoginPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`
+        }
+      })
+
+      if (error) {
+        console.error('Google sign-in error:', error)
+        setMessage(error.message)
       }
-    })
-    
-    if (error) {
-      setMessage(error.message)
+    } catch (error: any) {
+      console.error('Google sign-in error:', error)
+      setMessage('Google sign-in failed. Please try again.')
     }
   }
 
@@ -96,8 +102,8 @@ export default function LoginPage() {
             <X className="w-5 h-5" />
           </button>
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-brand-teal/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🗺️</span>
+            <div className="w-24 h-16 flex items-center justify-center mx-auto mb-4">
+              <img src="/logo-full.svg" alt="BuildaQuest" className="h-12" />
             </div>
             <CardTitle className="text-3xl font-bold text-brand-navy font-display mb-2">
               Welcome Back
@@ -172,7 +178,7 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-teal hover:bg-brand-teal/90 text-brand-navy font-semibold h-12"
+                className="w-full bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold h-12"
               >
                 {loading ? (
                   <>
@@ -203,7 +209,7 @@ export default function LoginPage() {
                 variant="outline"
                 onClick={handleGoogleSignIn}
                 className={`
-                  w-full bg-white/70 border-brand-teal/20 text-brand-navy hover:bg-white/20 h-12
+                  w-full bg-white/70 border-brand-teal/20 text-gray-900 hover:bg-white/90 h-12
                   ${isRTL ? 'flex-row-reverse' : 'flex-row'}
                 `}
               >

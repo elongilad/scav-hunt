@@ -6,14 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import { signUpWithEmail } from '@/app/auth/actions'
-import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X, User, Building } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X, User } from 'lucide-react'
 import Link from 'next/link'
 
 export default function SignUpPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [orgName, setOrgName] = useState('')
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -40,7 +39,7 @@ export default function SignUpPage() {
     }
 
     try {
-      const result = await signUpWithEmail(email, password)
+      const result = await signUpWithEmail(email, password, fullName)
 
       if (!result.success) {
         throw new Error(result.message)
@@ -77,34 +76,34 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-navy via-slate-800 to-slate-900 p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-sky via-white to-blue-50 p-4 relative">
       {/* Back Button */}
       <button
         onClick={() => router.push('/')}
-        className="absolute top-6 left-6 p-3 bg-white/10 hover:bg-white/20 backdrop-blur-lg rounded-full border border-white/20 text-white transition-colors z-10"
+        className="absolute top-6 left-6 p-3 bg-white/70 hover:bg-white/90 backdrop-blur-lg rounded-full border border-brand-teal/20 text-brand-navy transition-colors z-10 shadow-lg"
         aria-label="Back to home"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
 
       <div className="max-w-md w-full">
-        <Card className="bg-white/10 backdrop-blur-lg border-white/20 relative">
+        <Card className="bg-white/90 backdrop-blur-lg border-brand-teal/20 shadow-xl relative">
           {/* Close Button */}
           <button
             onClick={() => router.push('/')}
-            className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
+            className="absolute top-4 right-4 p-2 hover:bg-brand-navy/5 rounded-full text-gray-600 hover:text-brand-navy transition-colors"
             aria-label="Close"
           >
             <X className="w-5 h-5" />
           </button>
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-brand-teal/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🗺️</span>
+            <div className="w-24 h-16 flex items-center justify-center mx-auto mb-4">
+              <img src="/logo-full.svg" alt="BuildaQuest" className="h-12" />
             </div>
-            <CardTitle className="text-3xl font-bold text-white font-display mb-2">
+            <CardTitle className="text-3xl font-bold text-brand-navy font-display mb-2">
               Create Account
             </CardTitle>
-            <CardDescription className="text-gray-300">
+            <CardDescription className="text-gray-700">
               Start creating amazing quest adventures
             </CardDescription>
           </CardHeader>
@@ -115,19 +114,19 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor="fullName"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <User className="absolute top-3 left-3 w-5 h-5 text-gray-500" />
                   <input
                     id="fullName"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
-                    className="w-full py-3 pl-10 pr-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                    className="w-full py-3 pl-10 pr-4 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -136,67 +135,47 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <Mail className="absolute top-3 left-3 w-5 h-5 text-gray-500" />
                   <input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full py-3 pl-10 pr-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                    className="w-full py-3 pl-10 pr-4 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                     placeholder="Enter your email"
                   />
                 </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="orgName"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  Organization Name
-                </label>
-                <div className="relative">
-                  <Building className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
-                  <input
-                    id="orgName"
-                    type="text"
-                    value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)}
-                    required
-                    className="w-full py-3 pl-10 pr-4 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                    placeholder="Enter your organization name"
-                  />
-                </div>
-              </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-500" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full py-3 pl-10 pr-10 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                    className="w-full py-3 pl-10 pr-10 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                     placeholder="Create a password (min 8 characters)"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    className="absolute top-3 right-3 text-gray-500 hover:text-brand-navy"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -206,25 +185,25 @@ export default function SignUpPage() {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-gray-300 mb-2"
+                  className="block text-sm font-medium text-gray-700 mb-2"
                 >
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute top-3 left-3 w-5 h-5 text-gray-500" />
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full py-3 pl-10 pr-10 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                    className="w-full py-3 pl-10 pr-10 bg-white/70 border border-brand-teal/20 rounded-lg text-brand-navy placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                     placeholder="Confirm your password"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute top-3 right-3 text-gray-400 hover:text-white"
+                    className="absolute top-3 right-3 text-gray-500 hover:text-brand-navy"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -234,7 +213,7 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold h-12"
+                className="w-full bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold h-12 !text-white"
               >
                 {loading ? (
                   <>
@@ -251,10 +230,10 @@ export default function SignUpPage() {
             <div className="space-y-4">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/20" />
+                  <div className="w-full border-t border-brand-teal/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-gradient-to-br from-brand-navy via-slate-800 to-slate-900 text-gray-400">
+                  <span className="px-4 bg-white text-gray-500">
                     or sign up with
                   </span>
                 </div>
@@ -264,7 +243,7 @@ export default function SignUpPage() {
                 type="button"
                 variant="outline"
                 onClick={handleGoogleSignUp}
-                className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20 h-12"
+                className="w-full bg-white/70 border-brand-teal/20 text-gray-900 hover:bg-white/90 h-12"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path

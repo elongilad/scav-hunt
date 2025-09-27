@@ -21,18 +21,18 @@ function Button({ href, variant = "primary", size = "md", loading = false, loadi
     `inline-flex items-center gap-2 rounded-2xl font-semibold transition active:scale-[.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-teal ${sizeClasses}`;
   const styles =
     variant === "primary"
-      ? "bg-brand-500 text-white shadow-sm hover:shadow-md hover:bg-brand-600"
+      ? "bg-brand-teal text-white shadow-sm hover:shadow-md hover:bg-brand-teal/90"
       : variant === "outline"
-      ? "border border-brand-500 text-brand-500 hover:bg-brand-50 hover:text-brand-600"
+      ? "border border-brand-teal text-brand-navy hover:bg-brand-sky hover:text-brand-navy"
       : variant === "ghost"
-      ? "text-brand-700 hover:bg-brand-50 hover:text-brand-800"
+      ? "text-brand-navy hover:bg-brand-sky hover:text-brand-navy"
       : variant === "default"
-      ? "bg-brand-100 text-brand-800 hover:bg-brand-200"
+      ? "bg-brand-sky text-brand-navy hover:bg-brand-teal/20"
       : variant === "link"
-      ? "text-brand-500 underline-offset-4 hover:underline"
+      ? "text-brand-teal underline-offset-4 hover:underline"
       : variant === "destructive"
       ? "bg-red-600 text-white hover:bg-red-700"
-      : "border border-brand-200 text-brand-800 hover:bg-brand-50";
+      : "border border-gray-200 text-brand-navy hover:bg-brand-sky";
   const cls = `${base} ${styles} ${className}`.trim();
   const content = loading ? (loadingText || "Loading...") : children;
 
