@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 // Returns either a single renderUrl OR three segment URLs for fallback sequential playback
-export async function GET(req: NextRequest, { params }: { params: { eventId: string; stationId: string } }) {
-  const { eventId, stationId } = params;
+export async function GET(req: NextRequest, { params }: { params: Promise<{ eventId: string; stationId: string }> }) {
+  const { eventId, stationId } = await params;
   const routeId = req.nextUrl.searchParams.get('routeId');
   if (!routeId) return NextResponse.json({ error: 'routeId required' }, { status: 400 });
 
