@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { requireAuth } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import Link from 'next/link';
 
 export default async function CatalogPage() {
   const user = await requireAuth();
-  const supabase = await createClient();
+  const supabase = createAdminClient();
 
   const { data: models, error } = await supabase
     .from('hunt_models')
