@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     if (entitlement && entitlement.event_id) {
       return NextResponse.json({
         eventId: entitlement.event_id,
-        eventName: entitlement.events?.child_name || 'Quest Adventure',
+        eventName: (entitlement.events as any)?.child_name || 'Quest Adventure',
       });
     }
 

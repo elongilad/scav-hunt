@@ -21,10 +21,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
     .eq('to_event_station_id', stationId)
     .single();
 
-  if (mission?.compiled_status === 'ready' && mission.compiled_video_asset?.embed_url) {
+  if (mission?.compiled_status === 'ready' && (mission.compiled_video_asset as any)?.embed_url) {
     return NextResponse.json({
       kind: 'render',
-      renderUrl: mission.compiled_video_asset.embed_url
+      renderUrl: (mission.compiled_video_asset as any).embed_url
     });
   }
 
@@ -44,13 +44,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ even
     .eq('id', stationId)
     .single();
 
-  if (station?.user_clip?.embed_url) {
+  if ((station?.user_clip as any)?.embed_url) {
     // For MVP, we'll return the user clip as the main content
     // In a full implementation, you'd construct intro/outro from templates
     return NextResponse.json({
       kind: 'segments',
       intro_url: null, // Could be template intro
-      user_clip_url: station.user_clip.embed_url,
+      user_clip_url: (station?.user_clip as any)?.embed_url,
       outro_url: null  // Could be template outro
     });
   }
