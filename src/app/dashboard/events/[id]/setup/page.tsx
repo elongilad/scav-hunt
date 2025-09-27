@@ -70,6 +70,30 @@ export default function EventSetupPage({ params }: PageProps) {
     loadEventAndStations()
   }, [])
 
+  useEffect(() => {
+    checkEntitlement()
+  }, [id])
+
+  const checkEntitlement = async () => {
+    try {
+      const { data: entitlement } = await supabase
+        .from('event_entitlements')
+        .select('id, status')
+        .eq('event_id', id)
+        .eq('status', 'active')
+        .single()
+
+      if (!entitlement) {
+        // No entitlement found - redirect to catalog
+        router.push('/catalog')
+        return
+      }
+    } catch (error) {
+      console.error('Error checking entitlement:', error)
+      router.push('/catalog')
+    }
+  }
+
   const loadEventAndStations = async () => {
     try {
       // Load event details

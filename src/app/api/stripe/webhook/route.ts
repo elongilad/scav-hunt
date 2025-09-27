@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabase: any) {
-  const { userId, orgId, planId, eventId, eventPricingId, participantCount } = session.metadata || {}
+  const { userId, orgId, planId, eventId, eventPricingId, participantCount, modelId } = session.metadata || {}
 
   if (!userId || !orgId) {
     throw new Error('Missing required metadata')
@@ -116,6 +116,62 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, supabas
         })
         .eq('id', eventId)
     }
+  }
+
+  // Handle model purchases (marketplace flow)
+  if (modelId && session.mode === 'payment') {
+    console.log('Processing model purchase:', modelId);
+
+    // 1) Create entitlement
+    const { data: entitlement, error: entitlementError } = await supabase
+      .from('event_entitlements')
+      .insert({
+        org_id: orgId,
+        model_id: modelId,
+        stripe_customer_id: session.customer?.toString(),
+        stripe_checkout_session_id: session.id,
+        stripe_payment_intent_id: session.payment_intent?.toString(),
+        status: 'active',
+      })
+      .select('id')
+      .single();
+
+    if (entitlementError) {
+      throw new Error(`Failed to create entitlement: ${entitlementError.message}`);
+    }
+
+    // 2) Instantiate event from model (use server-side RPC if available)
+    // For now, create a basic event - TODO: implement proper model instantiation
+    const { data: model } = await supabase
+      .from('hunt_models')
+      .select('name, duration_min')
+      .eq('id', modelId)
+      .single();
+
+    const { data: newEvent, error: eventError } = await supabase
+      .from('events')
+      .insert({
+        org_id: orgId,
+        model_id: modelId,
+        buyer_user_id: userId,
+        child_name: model?.name || 'Quest Adventure',
+        date_start: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        status: 'draft',
+      })
+      .select('id')
+      .single();
+
+    if (eventError) {
+      throw new Error(`Failed to create event: ${eventError.message}`);
+    }
+
+    // 3) Link entitlement to event
+    await supabase
+      .from('event_entitlements')
+      .update({ event_id: newEvent.id })
+      .eq('id', entitlement.id);
+
+    console.log('Successfully created event:', newEvent.id, 'with entitlement for model:', modelId);
   }
 
   // Log the transaction

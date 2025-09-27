@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button'
 import { LogoutButton } from '@/components/LogoutButton'
 import { LanguageToggle } from '@/components/ui/language-toggle'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { isOwner } from '@/lib/owner'
 import Link from 'next/link'
-import { Plus, Settings, Users, Video, MapPin } from 'lucide-react'
+import { Plus, Settings, Users, Video, MapPin, Package } from 'lucide-react'
 
 interface DashboardPageClientProps {
   user: {
@@ -18,6 +19,7 @@ interface DashboardPageClientProps {
 
 export function DashboardPageClient({ user, orgs, events }: DashboardPageClientProps) {
   const { language } = useLanguage()
+  const showAuthoring = process.env.NEXT_PUBLIC_FEATURE_AUTHORING === 'true' && isOwner(user.id)
 
   return (
     <>
@@ -43,19 +45,21 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
             className="border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5"
           />
 
-          <Link href="/admin">
+          <Link href="/catalog">
             <Button variant="outline" className="border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5">
-              <Settings className="w-4 h-4 mr-2" />
-              {language === 'he' ? 'סטודיו אדמין' : 'Admin Studio'}
+              <Package className="w-4 h-4 mr-2" />
+              {language === 'he' ? 'קטלוג' : 'Catalog'}
             </Button>
           </Link>
 
-          <Link href="/dashboard/events/new">
-            <Button className="bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold">
-              <Plus className="w-4 h-4 mr-2" />
-              {language === 'he' ? 'אירוע חדש' : 'New Quest'}
-            </Button>
-          </Link>
+          {showAuthoring && (
+            <Link href="/admin">
+              <Button variant="outline" className="border-brand-navy/20 text-brand-navy hover:bg-brand-navy/5">
+                <Settings className="w-4 h-4 mr-2" />
+                {language === 'he' ? 'סטודיו אדמין' : 'Admin Studio'}
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -193,51 +197,53 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/admin/models">
+      <div className={`grid grid-cols-1 gap-6 ${showAuthoring ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+        <Link href="/catalog">
           <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg hover:shadow-xl transition-all cursor-pointer">
-            <Video className="w-12 h-12 text-brand-teal mb-4" />
+            <Package className="w-12 h-12 text-brand-teal mb-4" />
             <h3 className="text-xl font-semibold text-brand-navy mb-2">
-              {language === 'he' ? 'מודלי ציד' : 'Quest Models'}
+              {language === 'he' ? 'קטלוג קווסטים' : 'Quest Catalog'}
             </h3>
             <p className="text-gray-600 text-sm">
               {language === 'he'
-                ? 'צור ונהל תבניות צידים עם תחנות ומשימות'
-                : 'Create and manage quest templates with stations and missions'
+                ? 'גלה וקנה הרפתקאות קווסט מוכנות לשימוש'
+                : 'Discover and purchase ready-to-use quest adventures'
               }
             </p>
           </div>
         </Link>
 
-        <Link href="/admin/media">
+        <Link href="/dashboard/events">
           <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg hover:shadow-xl transition-all cursor-pointer">
-            <Settings className="w-12 h-12 text-brand-teal mb-4" />
+            <MapPin className="w-12 h-12 text-brand-teal mb-4" />
             <h3 className="text-xl font-semibold text-brand-navy mb-2">
-              {language === 'he' ? 'ספריית מדיה' : 'Media Library'}
+              {language === 'he' ? 'האירועים שלי' : 'My Events'}
             </h3>
             <p className="text-gray-600 text-sm">
               {language === 'he'
-                ? 'העלה וארגן תבניות וידאו, קליפי אודיו ותמונות'
-                : 'Upload and organize video templates, audio clips, and images'
+                ? 'נהל והפעל את הקווסטים שרכשת'
+                : 'Manage and run your purchased quests'
               }
             </p>
           </div>
         </Link>
 
-        <Link href="/dashboard/events/new">
-          <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg hover:shadow-xl transition-all cursor-pointer">
-            <Plus className="w-12 h-12 text-brand-teal mb-4" />
-            <h3 className="text-xl font-semibold text-brand-navy mb-2">
-              {language === 'he' ? 'קווסט חדש' : 'New Quest'}
-            </h3>
-            <p className="text-gray-600 text-sm">
-              {language === 'he'
-                ? 'הגדר אירוע רפתקה חדש לצוותים לחקור'
-                : 'Set up a new quest adventure for teams to explore'
-              }
-            </p>
-          </div>
-        </Link>
+        {showAuthoring && (
+          <Link href="/admin/models">
+            <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg hover:shadow-xl transition-all cursor-pointer">
+              <Video className="w-12 h-12 text-brand-teal mb-4" />
+              <h3 className="text-xl font-semibold text-brand-navy mb-2">
+                {language === 'he' ? 'מודלי ציד' : 'Quest Models'}
+              </h3>
+              <p className="text-gray-600 text-sm">
+                {language === 'he'
+                  ? 'צור ונהל תבניות צידים עם תחנות ומשימות'
+                  : 'Create and manage quest templates with stations and missions'
+                }
+              </p>
+            </div>
+          </Link>
+        )}
       </div>
     </>
   )

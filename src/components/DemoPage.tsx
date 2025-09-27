@@ -3,12 +3,15 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+import { HtmlLangUpdater } from "./HtmlLangUpdater";
+import { CookieConsent } from "./CookieConsent";
 
 export function DemoPage() {
   const { language } = useLanguage();
 
   return (
     <>
+      <HtmlLangUpdater />
       <Header />
 
       {/* HERO */}
@@ -43,6 +46,7 @@ export function DemoPage() {
       </section>
 
       <Footer />
+      <CookieConsent />
     </>
   );
 }

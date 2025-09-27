@@ -1,6 +1,6 @@
-# 🚀 Khapesethamatmon Deployment Guide
+# 🚀 BuildaQuest Deployment Guide
 
-This guide will help you deploy the Khapesethamatmon scavenger hunt platform to production.
+This guide will help you deploy the BuildaQuest quest adventure platform to production.
 
 ## Prerequisites
 
@@ -58,7 +58,7 @@ This guide will help you deploy the Khapesethamatmon scavenger hunt platform to 
 1. **Fork/Clone the repository:**
    ```bash
    git clone <your-repo-url>
-   cd khapesethamatmon
+   cd buildaquest
    ```
 
 2. **Deploy to Vercel:**
@@ -240,7 +240,7 @@ Before going live:
 
 ## 🎉 You're Live!
 
-Once deployed, your scavenger hunt platform will be available at your domain with:
+Once deployed, your quest adventure platform will be available at your domain with:
 
 - ✅ Multi-language support (Hebrew/English)
 - ✅ Mobile-first responsive design
@@ -250,4 +250,4 @@ Once deployed, your scavenger hunt platform will be available at your domain wit
 - ✅ QR code generation
 - ✅ Video recording and rendering
 
-Share your domain and start creating amazing scavenger hunt experiences!
+Share your domain and start creating amazing quest adventure experiences!

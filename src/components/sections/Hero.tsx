@@ -12,8 +12,8 @@ export default function Hero({
   metrics,
   primaryCta,
   secondaryCta,
-  screenshotSrc = "/img/dashboard.png",
-  qrSrc = "/img/qr.png",
+  screenshotSrc = "/img/dashboard.svg",
+  qrSrc = "/img/qr.svg",
 }: {
   badge?: string;
   title: string;

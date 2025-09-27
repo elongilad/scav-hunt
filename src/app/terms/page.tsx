@@ -33,10 +33,10 @@ export default function TermsPage() {
             Terms of <span className="text-spy-gold">Service</span>
           </h1>
           <p className="text-xl text-gray-300 mb-8">
-            Please read these terms carefully before using our platform. By using Khapesethamatmon, you agree to these terms.
+            Please read these terms carefully before using our platform. By using BuildaQuest, you agree to these terms.
           </p>
           <div className="text-sm text-gray-400">
-            Last updated: December 2024
+            Last updated: September 2025
           </div>
         </div>
       </section>
@@ -54,11 +54,11 @@ export default function TermsPage() {
               </div>
               <div className="space-y-4 text-gray-300">
                 <p>
-                  By accessing and using the Khapesethamatmon platform ("Service"), you accept and agree to be bound by these Terms of Service ("Terms").
+                  By accessing and using the BuildaQuest platform ("Service"), you accept and agree to be bound by these Terms of Service ("Terms").
                   If you do not agree to abide by these Terms, you are not authorized to use or access the Service.
                 </p>
                 <p>
-                  These Terms constitute a legally binding agreement between you and Khapesethamatmon regarding your use of the Service.
+                  These Terms constitute a legally binding agreement between you and BuildaQuest regarding your use of the Service.
                 </p>
               </div>
             </CardContent>
@@ -70,7 +70,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold mb-6">Service Description</h2>
               <div className="space-y-4 text-gray-300">
                 <p>
-                  Khapesethamatmon is a platform that allows users to create, manage, and run spy-themed scavenger hunts. Our services include:
+                  BuildaQuest is a platform that allows users to create, manage, and run custom quest adventures. Our services include:
                 </p>
                 <ul className="list-disc list-inside space-y-2 ml-4">
                   <li>Hunt model templates and customization tools</li>
@@ -314,7 +314,7 @@ export default function TermsPage() {
                   If you have questions about these Terms of Service, please contact us:
                 </p>
                 <div className="space-y-2">
-                  <p><strong>Email:</strong> <a href="mailto:legal@khapesethamatmon.com" className="text-spy-gold hover:text-spy-gold/80">legal@khapesethamatmon.com</a></p>
+                  <p><strong>Email:</strong> <a href="mailto:legal@buildaquest.com" className="text-spy-gold hover:text-spy-gold/80">legal@buildaquest.com</a></p>
                   <p><strong>Phone:</strong> <a href="tel:+972-50-123-4567" className="text-spy-gold hover:text-spy-gold/80">+972-50-123-4567</a></p>
                   <p><strong>Address:</strong> Tel Aviv, Israel</p>
                 </div>
@@ -329,7 +329,7 @@ export default function TermsPage() {
       <footer className="container mx-auto px-4 py-8 border-t border-white/20">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400 mb-4 md:mb-0">
-            © 2024 Khapesethamatmon. All Rights Reserved.
+            © 2024 BuildaQuest. All Rights Reserved.
           </div>
 
           <div className="flex gap-6">

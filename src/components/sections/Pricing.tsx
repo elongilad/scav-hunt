@@ -1,4 +1,4 @@
-import { CardHover } from "@/components/ui/Card";
+import { CardHover } from "@/components/ui/card";
 
 const tiers = [
   {

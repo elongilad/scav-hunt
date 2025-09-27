@@ -66,7 +66,7 @@ export function LogoImage({ size = 'md', className }: LogoImageProps) {
   return (
     <OptimizedImage
       src="/logo.png"
-      alt="Khapesethamatmon Logo"
+      alt="BuildaQuest Logo"
       width={sizes[size].width}
       height={sizes[size].height}
       priority
@@ -84,7 +84,7 @@ export function HeroImage({ className }: HeroImageProps) {
     <div className={cn('relative aspect-video overflow-hidden rounded-xl', className)}>
       <OptimizedImage
         src="/hero-spy.jpg"
-        alt="Spy scavenger hunt in action"
+        alt="Quest adventure in action"
         width={1200}
         height={675}
         priority

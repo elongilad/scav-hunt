@@ -1,0 +1,95 @@
+import { createClient } from '@/lib/supabase/server';
+import { requireAuth } from '@/lib/auth';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Clock, Users, Gift } from 'lucide-react';
+import Link from 'next/link';
+
+export default async function CatalogPage() {
+  const user = await requireAuth();
+  const supabase = await createClient();
+
+  const { data: models, error } = await supabase
+    .from('hunt_models')
+    .select('id, name, description, duration_min, age_min, age_max, cover_image_url')
+    .eq('published', true)
+    .order('name');
+
+  if (error) {
+    console.error('Error loading models:', error);
+  }
+
+  return (
+    <main className="container mx-auto p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Quest Catalog</h1>
+        <p className="text-gray-600">Choose from our collection of interactive quest adventures</p>
+      </div>
+
+      {!models || models.length === 0 ? (
+        <div className="text-center py-12">
+          <Gift className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-medium text-gray-600 mb-2">No quests available yet</h2>
+          <p className="text-gray-500">Check back soon for new adventures!</p>
+        </div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {models.map((model) => (
+            <Card key={model.id} className="hover:shadow-lg transition-shadow">
+              <CardHeader>
+                <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
+                  {model.cover_image_url ? (
+                    <img
+                      src={model.cover_image_url}
+                      alt={model.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Gift className="w-12 h-12 text-white" />
+                  )}
+                </div>
+                <CardTitle className="text-xl">{model.name}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-gray-600 line-clamp-3">
+                  {model.description || 'An exciting quest adventure awaits!'}
+                </p>
+
+                <div className="flex gap-2 flex-wrap">
+                  {model.duration_min && (
+                    <Badge variant="outline" className="text-xs">
+                      <Clock className="w-3 h-3 mr-1" />
+                      {model.duration_min} min
+                    </Badge>
+                  )}
+                  {model.age_min && model.age_max && (
+                    <Badge variant="outline" className="text-xs">
+                      <Users className="w-3 h-3 mr-1" />
+                      Ages {model.age_min}-{model.age_max}
+                    </Badge>
+                  )}
+                </div>
+
+                {/* For MVP, we'll create a simple form that could be enhanced with Stripe */}
+                <form action="/api/checkout/session" method="post" className="mt-4">
+                  <input type="hidden" name="modelId" value={model.id} />
+                  <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                    Buy & Set Up Quest
+                  </Button>
+                </form>
+
+                {/* Preview link for development */}
+                <Link href={`/catalog/${model.id}/preview`} className="block">
+                  <Button variant="outline" className="w-full">
+                    Preview Quest
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </main>
+  );
+}

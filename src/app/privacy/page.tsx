@@ -36,7 +36,7 @@ export default function PrivacyPage() {
             Your privacy and data security are our top priorities. Learn how we protect and handle your information.
           </p>
           <div className="text-sm text-gray-400">
-            Last updated: December 2024
+            Last updated: September 2025
           </div>
         </div>
       </section>
@@ -54,8 +54,8 @@ export default function PrivacyPage() {
               </div>
               <div className="prose prose-invert max-w-none">
                 <p className="text-gray-300 leading-relaxed">
-                  At Khapesethamatmon, we are committed to protecting your privacy and ensuring the security of your personal information.
-                  This Privacy Policy explains how we collect, use, and safeguard your data when you use our spy scavenger hunt platform.
+                  At BuildaQuest, we are committed to protecting your privacy and ensuring the security of your personal information.
+                  This Privacy Policy explains how we collect, use, and safeguard your data when you use our quest creation platform.
                 </p>
               </div>
             </CardContent>
@@ -194,7 +194,7 @@ export default function PrivacyPage() {
                   <li><strong>Account Deletion:</strong> Delete your account and associated data</li>
                 </ul>
                 <p>
-                  To exercise these rights, please contact us at <a href="mailto:privacy@khapesethamatmon.com" className="text-spy-gold hover:text-spy-gold/80">privacy@khapesethamatmon.com</a>.
+                  To exercise these rights, please contact us at <a href="mailto:privacy@buildaquest.com" className="text-spy-gold hover:text-spy-gold/80">privacy@buildaquest.com</a>.
                 </p>
               </div>
             </CardContent>
@@ -229,7 +229,7 @@ export default function PrivacyPage() {
                 <p>
                   Our platform is designed for users 13 years and older. We do not knowingly collect personal information from children under 13.
                   If you believe we have collected information from a child under 13, please contact us immediately at
-                  <a href="mailto:privacy@khapesethamatmon.com" className="text-spy-gold hover:text-spy-gold/80 ml-1">privacy@khapesethamatmon.com</a>.
+                  <a href="mailto:privacy@buildaquest.com" className="text-spy-gold hover:text-spy-gold/80 ml-1">privacy@buildaquest.com</a>.
                 </p>
               </div>
             </CardContent>
@@ -258,7 +258,7 @@ export default function PrivacyPage() {
                   If you have questions about this Privacy Policy or our data practices, please contact us:
                 </p>
                 <div className="space-y-2">
-                  <p><strong>Email:</strong> <a href="mailto:privacy@khapesethamatmon.com" className="text-spy-gold hover:text-spy-gold/80">privacy@khapesethamatmon.com</a></p>
+                  <p><strong>Email:</strong> <a href="mailto:privacy@buildaquest.com" className="text-spy-gold hover:text-spy-gold/80">privacy@buildaquest.com</a></p>
                   <p><strong>Phone:</strong> <a href="tel:+972-50-123-4567" className="text-spy-gold hover:text-spy-gold/80">+972-50-123-4567</a></p>
                   <p><strong>Address:</strong> Tel Aviv, Israel</p>
                 </div>
@@ -273,7 +273,7 @@ export default function PrivacyPage() {
       <footer className="container mx-auto px-4 py-8 border-t border-white/20">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400 mb-4 md:mb-0">
-            © 2024 Khapesethamatmon. All Rights Reserved.
+            © 2024 BuildaQuest. All Rights Reserved.
           </div>
 
           <div className="flex gap-6">

@@ -1,4 +1,4 @@
--- Khapesethamatmon: Self-serve spy scavenger hunt platform
+-- BuildaQuest: Self-serve quest adventure platform
 -- Complete database schema for Supabase
 
 -- Enable necessary extensions
@@ -41,6 +41,11 @@ create table hunt_models (
   description text,
   locale text default 'he',
   active boolean default true,
+  published boolean default false,    -- catalog visibility
+  duration_min int,                   -- estimated duration
+  age_min int,                        -- minimum age
+  age_max int,                        -- maximum age
+  cover_image_url text,               -- catalog thumbnail
   created_at timestamptz default now()
 );
 
@@ -163,6 +168,25 @@ create table purchases (
   created_at timestamptz default now()
 );
 
+-- Event entitlements (one per paid event)
+create table event_entitlements (
+  id uuid primary key default gen_random_uuid(),
+  org_id uuid not null references orgs(id) on delete cascade,
+  model_id uuid not null references hunt_models(id) on delete cascade,
+  event_id uuid unique references events(id) on delete cascade,
+  stripe_customer_id text,
+  stripe_checkout_session_id text unique,
+  stripe_payment_intent_id text,
+  status text not null default 'active' check (status in ('active','refunded','canceled')),
+  created_at timestamptz not null default now()
+);
+
+-- Map model -> Stripe price
+create table model_prices (
+  model_id uuid primary key references hunt_models(id) on delete cascade,
+  stripe_price_id text not null
+);
+
 -- Create indexes for better performance
 create index idx_org_members_user_id on org_members(user_id);
 create index idx_org_members_org_id on org_members(org_id);
@@ -179,6 +203,9 @@ create index idx_event_transitions_event_id on event_transitions(event_id);
 create index idx_event_visits_event_id on event_visits(event_id);
 create index idx_event_visits_team_password on event_visits(team_password);
 create index idx_purchases_event_id on purchases(event_id);
+create index idx_event_entitlements_org_id_model_id on event_entitlements(org_id, model_id);
+create index idx_event_entitlements_event_id on event_entitlements(event_id);
+create index idx_model_prices_model_id on model_prices(model_id);
 
 -- Row Level Security (RLS) policies
 alter table orgs enable row level security;
@@ -195,6 +222,8 @@ alter table event_teams enable row level security;
 alter table event_transitions enable row level security;
 alter table event_visits enable row level security;
 alter table purchases enable row level security;
+alter table event_entitlements enable row level security;
+alter table model_prices enable row level security;
 
 -- Policies for orgs
 create policy "Users can view orgs they are members of" on orgs
@@ -247,20 +276,24 @@ create policy "Users can manage media assets in their orgs" on media_assets
   );
 
 -- Policies for hunt_models
+create policy "Anyone can read published models" on hunt_models
+  for select
+  to authenticated
+  using (published = true);
+
 create policy "Users can view hunt models in their orgs" on hunt_models
   for select using (
     org_id in (
-      select org_id from org_members 
+      select org_id from org_members
       where user_id = auth.uid()
     )
   );
 
-create policy "Users can manage hunt models in their orgs" on hunt_models
+create policy "Only owner can write hunt models" on hunt_models
   for all using (
-    org_id in (
-      select org_id from org_members 
-      where user_id = auth.uid() and role in ('owner', 'admin', 'editor')
-    )
+    auth.uid() = '3fcc85ef-bd49-4b16-b51f-d3edb986d1df'::uuid
+  ) with check (
+    auth.uid() = '3fcc85ef-bd49-4b16-b51f-d3edb986d1df'::uuid
   );
 
 -- Policies for events (buyers can access their events)
@@ -286,6 +319,31 @@ create policy "Users can update events they own or bought" on events
       select org_id from org_members 
       where user_id = auth.uid() and role in ('owner', 'admin', 'editor')
     ) or buyer_user_id = auth.uid()
+  );
+
+-- Policies for event_entitlements
+create policy "Users can view entitlements for their events" on event_entitlements
+  for select using (
+    org_id in (
+      select org_id from org_members
+      where user_id = auth.uid()
+    ) or event_id in (
+      select id from events where buyer_user_id = auth.uid()
+    )
+  );
+
+create policy "Only system can manage entitlements" on event_entitlements
+  for all using (false);
+
+-- Policies for model_prices
+create policy "Anyone can read model prices" on model_prices
+  for select to authenticated using (true);
+
+create policy "Only owner can manage model prices" on model_prices
+  for all using (
+    auth.uid() = '3fcc85ef-bd49-4b16-b51f-d3edb986d1df'::uuid
+  ) with check (
+    auth.uid() = '3fcc85ef-bd49-4b16-b51f-d3edb986d1df'::uuid
   );
 
 -- Helper functions

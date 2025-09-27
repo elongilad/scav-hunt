@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Khapesethamatmon Deployment Script
+# BuildaQuest Deployment Script
 # This script helps deploy the platform to production
 
 set -e
 
-echo "🕵️ Khapesethamatmon Deployment Script"
+echo "🗺️ BuildaQuest Deployment Script"
 echo "======================================"
 
 # Colors for output
@@ -114,7 +114,7 @@ fi
 if [ $? -eq 0 ]; then
     print_success "Deployment completed successfully!"
     echo ""
-    echo "🎉 Your Khapesethamatmon platform is now live!"
+    echo "🎉 Your BuildaQuest platform is now live!"
     echo ""
     echo "Next steps:"
     echo "1. Test the authentication flow"

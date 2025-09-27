@@ -44,6 +44,46 @@ export async function getUserOrgs(userId: string) {
   */
 }
 
+export async function getUser() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error) {
+    console.error('Auth error:', error);
+    return null;
+  }
+
+  return user;
+}
+
+export async function getUserAndOrg() {
+  const user = await getUser();
+  if (!user) {
+    return { user: null, org: null };
+  }
+
+  const supabase = await createClient();
+
+  // Get user's organization
+  const { data: orgMember } = await supabase
+    .from('org_members')
+    .select('org_id, organizations(*)')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!orgMember) {
+    return { user, org: null };
+  }
+
+  return {
+    user,
+    org: {
+      id: orgMember.org_id,
+      ...(orgMember.organizations as any)
+    }
+  };
+}
+
 export async function getUserRole(userId: string, orgId: string) {
   // TEMPORARY: Skip org_members queries to avoid RLS recursion
   // TODO: Fix org_members RLS policies and restore proper role checking

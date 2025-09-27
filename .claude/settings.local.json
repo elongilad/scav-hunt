@@ -10,7 +10,8 @@
       "Read(//Users/elongilad/scavhunt/**)",
       "Bash(mv:*)",
       "Bash(rmdir:*)",
-      "Bash(git rev-parse:*)"
+      "Bash(git rev-parse:*)",
+      "Bash(npm run dev:*)"
     ],
     "deny": [],
     "ask": []

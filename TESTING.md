@@ -1,6 +1,6 @@
-# 🧪 Khapesethamatmon Testing Guide
+# 🧪 BuildaQuest Testing Guide
 
-Complete testing checklist for the scavenger hunt platform.
+Complete testing checklist for the quest adventure platform.
 
 ## 🚀 Quick Start Testing
 
@@ -8,7 +8,7 @@ Complete testing checklist for the scavenger hunt platform.
 ```bash
 # 1. Clone the repository
 git clone <your-repo>
-cd khapesethamatmon
+cd buildaquest
 
 # 2. Set up environment
 cp .env.example .env.local

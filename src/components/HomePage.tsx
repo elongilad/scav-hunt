@@ -38,8 +38,8 @@ export function HomePage() {
             ? '🎉 5+ צוותים לאירוע · 🧩 10-20 תחנות · ⚡ ניווט חכם'
             : '🎉 5+ teams per event · 🧩 10–20 stations · ⚡ Smart routing'
           }
-          screenshotSrc="/img/dashboard.png"
-          qrSrc="/img/qr.png"
+          screenshotSrc="/img/dashboard.svg"
+          qrSrc="/img/qr.svg"
         />
 
       {/* HOW IT WORKS */}

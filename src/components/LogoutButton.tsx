@@ -7,11 +7,11 @@ import { useRouter } from 'next/navigation'
 
 interface LogoutButtonProps {
   variant?: 'default' | 'outline' | 'ghost'
-  size?: 'sm' | 'default' | 'lg'
+  size?: 'sm' | 'md' | 'lg'
   className?: string
 }
 
-export function LogoutButton({ variant = 'outline', size = 'default', className }: LogoutButtonProps) {
+export function LogoutButton({ variant = 'outline', size = 'md', className }: LogoutButtonProps) {
   const router = useRouter()
 
   const handleLogout = async () => {

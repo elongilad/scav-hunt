@@ -6,6 +6,59 @@ const nextConfig: NextConfig = {
       allowedOrigins: ['localhost:3000']
     }
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          // Security headers
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), vr=(), accelerometer=(), gyroscope=(), magnetometer=(), clipboard-read=(), clipboard-write=()',
+          },
+          // HSTS (uncomment for production with HTTPS)
+          // {
+          //   key: 'Strict-Transport-Security',
+          //   value: 'max-age=31536000; includeSubDomains; preload',
+          // },
+          // Content Security Policy
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.vercel.app https://*.supabase.co https://js.stripe.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: blob: https: http:",
+              "connect-src 'self' https://*.supabase.co https://api.stripe.com wss://*.supabase.co",
+              "media-src 'self' blob: https://*.supabase.co",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests"
+            ].join('; '),
+          },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
