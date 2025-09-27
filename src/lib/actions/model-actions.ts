@@ -57,9 +57,8 @@ export async function publishModelVersion(input: z.infer<typeof publishModelSche
     const stations = stationsResult.data || []
     const missions = missionsResult.data || []
 
-    if (stations.length === 0) {
-      throw new Error('Cannot publish model without stations')
-    }
+    // Models can be published without stations for marketplace templates
+    // Stations and missions will be added when instantiating events
 
     // Generate content hash
     const contentString = JSON.stringify({
@@ -108,6 +107,16 @@ export async function publishModelVersion(input: z.infer<typeof publishModelSche
 
     if (versionError || !modelVersion) {
       throw new Error(`Failed to create model version: ${versionError?.message}`)
+    }
+
+    // Update the hunt model to be published in catalog
+    const { error: publishError } = await supabase
+      .from('hunt_models')
+      .update({ published: true })
+      .eq('id', huntModelId)
+
+    if (publishError) {
+      throw new Error(`Failed to publish model to catalog: ${publishError?.message}`)
     }
 
     // Create station snapshots
