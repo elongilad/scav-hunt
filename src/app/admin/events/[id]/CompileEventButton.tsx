@@ -22,10 +22,8 @@ export function CompileEventButton({ eventId }: CompileEventButtonProps) {
       const result = await compileEvent({ eventId })
 
       if (result.success) {
-        alert(`✅ ${t('model_detail.compile_success', language)
-          .replace('{jobs}', result.jobsCreated?.toString() || '0')
-          .replace('{missions}', result.missionsProcessed?.toString() || '0')}`)
-        window.location.reload() // Refresh to show new render jobs
+        alert(`✅ ${result.message}`)
+        window.location.reload() // Refresh to show updated status
       } else {
         alert(`❌ ${t('model_detail.compile_error', language)}: ${result.error}`)
       }
