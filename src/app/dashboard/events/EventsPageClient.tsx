@@ -40,10 +40,10 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-white font-display mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 font-display mb-2">
             {language === 'he' ? 'אירועי ציד' : 'Quest Events'}
           </h1>
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             {language === 'he' ? 'נהל את כל אירועי הציד שלך' : 'Manage all your quest adventures'}
           </p>
         </div>
@@ -52,7 +52,7 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
           <LanguageToggle />
           <LogoutButton
             variant="outline"
-            className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+            className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
           />
 
           <Link href="/dashboard/events/new">
@@ -66,12 +66,12 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-brand-teal">{stats.totalEvents}</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-600">
                   {language === 'he' ? 'סה"כ אירועים' : 'Total Events'}
                 </p>
               </div>
@@ -80,12 +80,12 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-brand-teal">{stats.activeEvents}</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-600">
                   {language === 'he' ? 'פעילים כעת' : 'Active Now'}
                 </p>
               </div>
@@ -94,12 +94,12 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-brand-teal">{stats.upcomingEvents}</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-600">
                   {language === 'he' ? 'צפויים' : 'Upcoming'}
                 </p>
               </div>
@@ -108,12 +108,12 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-2xl font-bold text-brand-teal">{stats.completedEvents}</p>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-600">
                   {language === 'he' ? 'הושלמו' : 'Completed'}
                 </p>
               </div>
@@ -124,28 +124,28 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
       </div>
 
       {/* Search and Filters */}
-      <Card className="bg-white/10 border-white/20 text-white">
+      <Card className="bg-white border-gray-200 text-gray-900">
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-600 w-4 h-4" />
               <input
                 type="text"
                 placeholder={language === 'he' ? 'חפש אירועים...' : 'Search events...'}
-                className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-900 placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
               />
             </div>
             <div className="flex gap-2 flex-wrap">
-              <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                 {language === 'he' ? 'כל האירועים' : 'All Events'}
               </Button>
-              <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                 {language === 'he' ? 'פעילים' : 'Active'}
               </Button>
-              <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                 {language === 'he' ? 'צפויים' : 'Upcoming'}
               </Button>
-              <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+              <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                 {language === 'he' ? 'הושלמו' : 'Completed'}
               </Button>
             </div>
@@ -162,7 +162,7 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
             const isPast = eventDate && eventDate < new Date()
 
             return (
-              <Card key={event.id} className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-colors">
+              <Card key={event.id} className="bg-white border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">
                 <CardHeader className="pb-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
@@ -196,25 +196,25 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
 
                       <div className="flex items-center gap-2 mb-2">
                         {event.child_age && (
-                          <Badge variant="outline" className="text-xs border-white/20 text-gray-300">
+                          <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                             {language === 'he' ? `גיל ${event.child_age}` : `Age ${event.child_age}`}
                           </Badge>
                         )}
                         {event.duration_minutes && (
-                          <Badge variant="outline" className="text-xs border-white/20 text-gray-300">
+                          <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                             <Clock className="w-3 h-3 mr-1" />
                             {event.duration_minutes} {language === 'he' ? 'דק׳' : 'mins'}
                           </Badge>
                         )}
                         {event.participant_count && (
-                          <Badge variant="outline" className="text-xs border-white/20 text-gray-300">
+                          <Badge variant="outline" className="text-xs border-gray-200 text-gray-600">
                             <Users className="w-3 h-3 mr-1" />
                             {event.participant_count} {language === 'he' ? 'משתתפים' : 'participants'}
                           </Badge>
                         )}
                       </div>
 
-                      <div className="flex items-center gap-1 text-sm text-gray-300 mb-2">
+                      <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
                         <Calendar className="w-4 h-4 text-brand-teal" />
                         <span>
                           {eventDate ? eventDate.toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US') :
@@ -230,7 +230,7 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
                         </span>
                       </div>
 
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-gray-600">
                         {language === 'he' ? 'מודל:' : 'Model:'} {(event as any).hunt_models?.name ||
                           (language === 'he' ? 'לא נבחר' : 'None selected')}
                       </p>
@@ -245,34 +245,34 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
                 <CardContent className="space-y-4">
                   {/* Quest Model Info */}
                   {(event as any).hunt_models && (
-                    <div className="p-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                       <div className="flex items-center gap-2 mb-1">
                         <Video className="w-4 h-4 text-brand-teal" />
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-medium text-gray-900">
                           {(event as any).hunt_models.name}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-600">
                         {(event as any).hunt_models.description?.substring(0, 80)}...
                       </p>
                     </div>
                   )}
 
                   {/* Organization */}
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-600">
                     {language === 'he' ? 'ארגון:' : 'Organization:'} {(event as any).orgs?.name}
                   </div>
 
                   {/* Created Date */}
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-600">
                     {language === 'he' ? 'נוצר ב-' : 'Created on '}
                     {new Date(event.created_at).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US')}
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2 border-t border-white/10">
+                  <div className="flex gap-2 pt-2 border-t border-gray-200">
                     <Link href={`/dashboard/events/${event.id}`} className="flex-1">
-                      <Button size="sm" variant="outline" className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20">
+                      <Button size="sm" variant="outline" className="w-full bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                         <Eye className="w-4 h-4 mr-2" />
                         {language === 'he' ? 'צפה' : 'View'}
                       </Button>
@@ -280,7 +280,7 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
 
                     {event.status !== 'completed' && (
                       <Link href={`/dashboard/events/${event.id}/edit`}>
-                        <Button size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+                        <Button size="sm" variant="outline" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
                           <Edit className="w-4 h-4" />
                         </Button>
                       </Link>
@@ -298,13 +298,13 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
           })}
         </div>
       ) : (
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardContent className="text-center py-12">
             <Calendar className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-gray-400 mb-2">
+            <h3 className="text-xl font-medium text-gray-600 mb-2">
               {language === 'he' ? 'אין אירועים עדיין' : 'No events yet'}
             </h3>
-            <p className="text-gray-500 mb-6">
+            <p className="text-gray-600 mb-6">
               {language === 'he' ? 'צור את האירוע הראשון שלך כדי להתחיל' : 'Create your first quest to get started'}
             </p>
             <Link href="/dashboard/events/new">
@@ -318,31 +318,31 @@ export function EventsPageClient({ events, stats }: EventsPageClientProps) {
       )}
 
       {/* Quick Actions */}
-      <Card className="bg-white/10 border-white/20 text-white">
+      <Card className="bg-white border-gray-200 text-gray-900">
         <CardHeader>
           <CardTitle>{language === 'he' ? 'פעולות מהירות' : 'Quick Actions'}</CardTitle>
-          <CardDescription className="text-gray-400">
+          <CardDescription className="text-gray-600">
             {language === 'he' ? 'דרכים מהירות ליצור ולנהל אירועים' : 'Fast ways to create and manage events'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/dashboard/events/new">
-              <Button variant="outline" className="w-full h-20 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col">
+              <Button variant="outline" className="w-full h-20 bg-white border-gray-300 text-gray-900 hover:bg-gray-50 flex-col">
                 <Plus className="w-6 h-6 mb-2" />
                 {language === 'he' ? 'אירוע חדש' : 'New Quest'}
               </Button>
             </Link>
 
             <Link href="/admin/models">
-              <Button variant="outline" className="w-full h-20 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col">
+              <Button variant="outline" className="w-full h-20 bg-white border-gray-300 text-gray-900 hover:bg-gray-50 flex-col">
                 <Video className="w-6 h-6 mb-2" />
                 {language === 'he' ? 'מודלי ציד' : 'Quest Models'}
               </Button>
             </Link>
 
             <Link href="/dashboard/events?filter=active">
-              <Button variant="outline" className="w-full h-20 bg-white/10 border-white/20 text-white hover:bg-white/20 flex-col">
+              <Button variant="outline" className="w-full h-20 bg-white border-gray-300 text-gray-900 hover:bg-gray-50 flex-col">
                 <Play className="w-6 h-6 mb-2" />
                 {language === 'he' ? 'אירועים פעילים' : 'Active Events'}
               </Button>

@@ -29,8 +29,8 @@ export default async function BillingPage() {
       <div className="space-y-8">
         <div className="text-center py-12">
           <AlertTriangle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">ארגון לא נמצא</h2>
-          <p className="text-gray-400 mb-6">עליכם להיות חברים בארגון כדי לגשת לעמוד התשלומים</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">ארגון לא נמצא</h2>
+          <p className="text-gray-600 mb-6">עליכם להיות חברים בארגון כדי לגשת לעמוד התשלומים</p>
           <Link href="/dashboard">
             <Button className="bg-spy-gold hover:bg-spy-gold/90 text-black">
               חזור לדשבורד
@@ -86,24 +86,24 @@ export default async function BillingPage() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             <CreditCard className="w-8 h-8 text-spy-gold inline mr-3" />
             תשלומים ומנויים
           </h1>
-          <p className="text-gray-300">
+          <p className="text-gray-600">
             ניהול התכנית והתשלומים של {currentOrg.name}
           </p>
         </div>
         
         <div className="flex gap-3">
           <Link href="/dashboard/billing/plans">
-            <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+            <Button variant="outline" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
               <ArrowUp className="w-4 h-4 mr-2" />
               שדרג תכנית
             </Button>
           </Link>
-          
-          <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+
+          <Button variant="outline" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
             <Settings className="w-4 h-4 mr-2" />
             הגדרות תשלום
           </Button>
@@ -111,7 +111,7 @@ export default async function BillingPage() {
       </div>
 
       {/* Current Plan */}
-      <Card className="bg-white/10 border-white/20 text-white">
+      <Card className="bg-white border-gray-200 text-gray-900">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
@@ -119,7 +119,7 @@ export default async function BillingPage() {
                 <Crown className="w-6 h-6 text-spy-gold" />
                 התכנית הנוכחית
               </CardTitle>
-              <CardDescription className="text-gray-400">
+              <CardDescription className="text-gray-600">
                 סטטוס המנוי והגבלות שימוש
               </CardDescription>
             </div>
@@ -145,7 +145,7 @@ export default async function BillingPage() {
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl font-bold text-spy-gold mb-2">{currentPlan.name}</h3>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-3xl font-bold text-gray-900">
                   {formatPrice(currentPlan.price)}
                   <span className="text-sm text-gray-400 font-normal">/חודש</span>
                 </p>
@@ -165,12 +165,12 @@ export default async function BillingPage() {
 
             {/* Usage Statistics */}
             <div className="space-y-4">
-              <h4 className="font-medium text-white">שימוש החודש</h4>
+              <h4 className="font-medium text-gray-900">שימוש החודש</h4>
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-400">אירועים</span>
-                    <span className="text-white">
+                    <span className="text-gray-600">אירועים</span>
+                    <span className="text-gray-900">
                       {eventsThisMonth?.length || 0} / {currentPlan.limits.events_per_month === -1 ? '∞' : currentPlan.limits.events_per_month}
                     </span>
                   </div>
@@ -189,7 +189,7 @@ export default async function BillingPage() {
 
             {/* Features */}
             <div className="space-y-4">
-              <h4 className="font-medium text-white">תכונות התכנית</h4>
+              <h4 className="font-medium text-gray-900">תכונות התכנית</h4>
               <div className="space-y-2">
                 {currentPlan.features.slice(0, 4).map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 text-sm">
@@ -206,7 +206,7 @@ export default async function BillingPage() {
       {/* Payment Methods & Billing */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Payment History */}
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Receipt className="w-5 h-5 text-spy-gold" />
@@ -248,7 +248,7 @@ export default async function BillingPage() {
         </Card>
 
         {/* Event Payments */}
-        <Card className="bg-white/10 border-white/20 text-white">
+        <Card className="bg-white border-gray-200 text-gray-900">
           <CardHeader>
             <CardTitle>תשלומי אירועים</CardTitle>
           </CardHeader>

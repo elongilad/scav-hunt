@@ -289,7 +289,7 @@ export default function EventSetupPage({ params }: PageProps) {
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-spy-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">טוען הגדרות אירוע...</p>
+          <p className="text-gray-600">טוען הגדרות אירוע...</p>
         </div>
       </div>
     )
@@ -300,22 +300,22 @@ export default function EventSetupPage({ params }: PageProps) {
       {/* Header */}
       <div className="flex items-center gap-4">
         <Link href={`/dashboard/events/${id}`}>
-          <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+          <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
             <ArrowLeft className="w-4 h-4 mr-2" />
             חזור
           </Button>
         </Link>
         
         <div>
-          <h1 className="text-3xl font-bold text-white">הגדרת עמדות</h1>
-          <p className="text-gray-300">
+          <h1 className="text-3xl font-bold text-gray-900">הגדרת עמדות</h1>
+          <p className="text-gray-600">
             הגדר מיקומים ממשיים עבור {event?.child_name ? `ציד של ${event.child_name}` : 'האירוע'}
           </p>
         </div>
       </div>
 
       {/* Progress Overview */}
-      <Card className="bg-white/10 border-white/20 text-white">
+      <Card className="bg-white border-gray-200 text-gray-900">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="w-5 h-5 text-spy-gold" />
@@ -325,7 +325,7 @@ export default function EventSetupPage({ params }: PageProps) {
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-white">התקדמות כללית</span>
+              <span className="text-gray-900">התקדמות כללית</span>
               <span className="text-spy-gold font-semibold">{getSetupProgress()}%</span>
             </div>
             <Progress value={getSetupProgress()} className="h-2" />
@@ -333,25 +333,25 @@ export default function EventSetupPage({ params }: PageProps) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">{stations.length}</p>
-                <p className="text-gray-400">סה"כ עמדות</p>
+                <p className="text-gray-600">סה"כ עמדות</p>
               </div>
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">
                   {Object.values(mappings).filter(m => m.real_location).length}
                 </p>
-                <p className="text-gray-400">מיקומים מוגדרים</p>
+                <p className="text-gray-600">מיקומים מוגדרים</p>
               </div>
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">
                   {Object.values(mappings).filter(m => m.qr_generated).length}
                 </p>
-                <p className="text-gray-400">QR codes</p>
+                <p className="text-gray-600">QR codes</p>
               </div>
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">
                   {Object.values(mappings).filter(m => m.media_uploaded).length}
                 </p>
-                <p className="text-gray-400">עם תמונות</p>
+                <p className="text-gray-600">עם תמונות</p>
               </div>
             </div>
           </div>
@@ -365,7 +365,7 @@ export default function EventSetupPage({ params }: PageProps) {
           const isComplete = isStationComplete(station.station_id)
           
           return (
-            <Card key={station.id} className="bg-white/10 border-white/20 text-white">
+            <Card key={station.id} className="bg-white border-gray-200 text-gray-900">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
@@ -382,7 +382,7 @@ export default function EventSetupPage({ params }: PageProps) {
                       
                       <div>
                         <h3 className="text-lg font-semibold">עמדה {station.station_id}: {station.display_name}</h3>
-                        <p className="text-sm text-gray-400">{station.station_type}</p>
+                        <p className="text-sm text-gray-600">{station.station_type}</p>
                       </div>
                     </CardTitle>
                   </div>
@@ -395,14 +395,14 @@ export default function EventSetupPage({ params }: PageProps) {
               </CardHeader>
               
               <CardContent className="space-y-6">
-                <div className="p-4 bg-white/5 rounded-lg">
-                  <p className="text-sm text-gray-300 mb-2">תיאור הפעילות:</p>
-                  <p className="text-white">{station.activity_description}</p>
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-2">תיאור הפעילות:</p>
+                  <p className="text-gray-900">{station.activity_description}</p>
                   
                   {station.props_needed && station.props_needed.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-sm text-gray-300 mb-1">אביזרים נדרשים:</p>
-                      <ul className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-600 mb-1">אביזרים נדרשים:</p>
+                      <ul className="text-sm text-gray-600">
                         {station.props_needed.map((prop, idx) => (
                           <li key={idx}>• {prop}</li>
                         ))}
@@ -415,7 +415,7 @@ export default function EventSetupPage({ params }: PageProps) {
                   {/* Location Mapping */}
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-white flex items-center gap-2">
+                      <Label className="text-gray-900 flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-spy-gold" />
                         מיקום בפועל
                       </Label>
@@ -423,28 +423,28 @@ export default function EventSetupPage({ params }: PageProps) {
                         value={mapping.real_location || ''}
                         onChange={(e) => updateMapping(station.station_id, { real_location: e.target.value })}
                         placeholder="למשל: בחצר האחורית, ליד העץ הגדול..."
-                        className="bg-white/10 border-white/20 text-white placeholder-gray-400"
+                        className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label className="text-white">הוראות הגדרה</Label>
+                      <Label className="text-gray-900">הוראות הגדרה</Label>
                       <Textarea
                         value={mapping.setup_notes || ''}
                         onChange={(e) => updateMapping(station.station_id, { setup_notes: e.target.value })}
                         placeholder="הוראות מיוחדות להגדרת העמדה..."
-                        className="bg-white/10 border-white/20 text-white placeholder-gray-400"
+                        className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                         rows={3}
                       />
                     </div>
 
                     <div>
-                      <Label className="text-white">רמז מותאם (אופציונלי)</Label>
+                      <Label className="text-gray-900">רמז מותאם (אופציונלי)</Label>
                       <Input
                         value={mapping.custom_clue || ''}
                         onChange={(e) => updateMapping(station.station_id, { custom_clue: e.target.value })}
                         placeholder="רמז מותאם למיקום הספציפי..."
-                        className="bg-white/10 border-white/20 text-white placeholder-gray-400"
+                        className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                       />
                     </div>
                   </div>
@@ -452,11 +452,11 @@ export default function EventSetupPage({ params }: PageProps) {
                   {/* Media & QR */}
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-white flex items-center gap-2">
+                      <Label className="text-gray-900 flex items-center gap-2">
                         <Camera className="w-4 h-4 text-spy-gold" />
                         תמונות המיקום
                       </Label>
-                      <div className="border-2 border-dashed border-white/20 rounded-lg p-4 text-center">
+                      <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
                         <input
                           type="file"
                           multiple
@@ -467,7 +467,7 @@ export default function EventSetupPage({ params }: PageProps) {
                         />
                         <label htmlFor={`photos-${station.station_id}`} className="cursor-pointer">
                           <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" aria-hidden="true" />
-                          <p className="text-gray-400 text-sm">לחץ להעלאת תמונות</p>
+                          <p className="text-gray-600 text-sm">לחץ להעלאת תמונות</p>
                         </label>
                         
                         {mapping.photos && mapping.photos.length > 0 && (
@@ -514,7 +514,7 @@ export default function EventSetupPage({ params }: PageProps) {
                         onClick={() => saveStationMapping(station.station_id)}
                         disabled={!mapping.real_location}
                         variant="outline"
-                        className="w-full bg-white/10 border-white/20 text-white hover:bg-white/20"
+                        className="w-full bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
                       >
                         <Save className="w-4 h-4 mr-2" />
                         שמור הגדרות
@@ -529,12 +529,12 @@ export default function EventSetupPage({ params }: PageProps) {
       </div>
 
       {/* Complete Setup */}
-      <Card className="bg-white/10 border-white/20 text-white">
+      <Card className="bg-white border-gray-200 text-gray-900">
         <CardContent className="p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">סיום הגדרת האירוע</h3>
-              <p className="text-gray-300">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">סיום הגדרת האירוע</h3>
+              <p className="text-gray-600">
                 לאחר השלמת הגדרת כל העמדות, האירוע יהיה מוכן להפעלה
               </p>
             </div>

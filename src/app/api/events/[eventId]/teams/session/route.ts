@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-export async function POST(req: NextRequest, { params }: { params: { eventId: string } }) {
-  const { eventId } = params;
+export async function POST(req: NextRequest, { params }: { params: Promise<{ eventId: string }> }) {
+  const { eventId } = await params;
   const { teamCode } = await req.json();
   if (!teamCode || typeof teamCode !== 'string' || teamCode.length !== 4) {
     return NextResponse.json({ error: 'invalid' }, { status: 400 });

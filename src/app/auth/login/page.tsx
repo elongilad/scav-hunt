@@ -192,7 +192,7 @@ export default function LoginPage() {
                   <div className="w-full border-t border-brand-teal/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className={`px-4 bg-gradient-to-br from-brand-navy via-slate-800 to-slate-900 text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
+                  <span className={`px-4 bg-white text-gray-500 ${isRTL ? 'text-right' : 'text-left'}`}>
                     or continue with
                   </span>
                 </div>

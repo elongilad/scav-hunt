@@ -23,16 +23,16 @@ function Button({ href, variant = "primary", size = "md", loading = false, loadi
     variant === "primary"
       ? "bg-brand-500 text-white shadow-sm hover:shadow-md hover:bg-brand-600"
       : variant === "outline"
-      ? "border border-brand-500 text-brand-500 hover:bg-brand-50"
+      ? "border border-brand-500 text-brand-500 hover:bg-brand-50 hover:text-brand-600"
       : variant === "ghost"
-      ? "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+      ? "text-brand-700 hover:bg-brand-50 hover:text-brand-800"
       : variant === "default"
-      ? "bg-slate-100 text-slate-900 hover:bg-slate-200"
+      ? "bg-brand-100 text-brand-800 hover:bg-brand-200"
       : variant === "link"
       ? "text-brand-500 underline-offset-4 hover:underline"
       : variant === "destructive"
       ? "bg-red-600 text-white hover:bg-red-700"
-      : "border border-slate-200 text-slate-900 hover:bg-white";
+      : "border border-brand-200 text-brand-800 hover:bg-brand-50";
   const cls = `${base} ${styles} ${className}`.trim();
   const content = loading ? (loadingText || "Loading...") : children;
 
