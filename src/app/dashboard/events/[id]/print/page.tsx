@@ -9,6 +9,7 @@ export default function EventPrintPage({ params }: { params: { id: string } }) {
   const [event, setEvent] = useState<any>(null);
   const [teams, setTeams] = useState<any[]>([]);
   const [stations, setStations] = useState<any[]>([]);
+  const [qrCodes, setQrCodes] = useState<{[key: string]: string}>({});
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
@@ -43,7 +44,23 @@ export default function EventPrintPage({ params }: { params: { id: string } }) {
         .eq('event_id', eventId)
         .order('sequence_order');
 
-      if (stationsData) setStations(stationsData);
+      if (stationsData) {
+        setStations(stationsData);
+
+        // Generate QR codes for stations
+        const qrCodeMap: {[key: string]: string} = {};
+        for (const station of stationsData) {
+          try {
+            const qrUrl = `${window.location.origin}/s/${eventId}/${station.id}`;
+            const qrDataUrl = await generateQRCode(qrUrl);
+            qrCodeMap[station.id] = qrDataUrl;
+          } catch (error) {
+            console.error(`Failed to generate QR code for station ${station.id}:`, error);
+            qrCodeMap[station.id] = ''; // fallback
+          }
+        }
+        setQrCodes(qrCodeMap);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -112,8 +129,7 @@ export default function EventPrintPage({ params }: { params: { id: string } }) {
         <h2 className="text-lg font-bold mb-4">Station QR Codes</h2>
         <div className="grid grid-cols-2 gap-6">
           {stations.map((station, index) => {
-            const qrUrl = `${window.location.origin}/s/${eventId}/${station.id}`;
-            const qrCodeDataUrl = generateQRCode(qrUrl);
+            const qrCodeDataUrl = qrCodes[station.id];
 
             return (
               <div key={station.id} className="p-4 border text-center break-inside-avoid">
@@ -121,14 +137,20 @@ export default function EventPrintPage({ params }: { params: { id: string } }) {
                   Station {index + 1}: {(station.model_station as any)?.display_name}
                 </div>
                 <div className="flex justify-center mb-2">
-                  <img
-                    src={qrCodeDataUrl}
-                    alt={`QR Code for Station ${index + 1}`}
-                    className="w-32 h-32"
-                  />
+                  {qrCodeDataUrl ? (
+                    <img
+                      src={qrCodeDataUrl}
+                      alt={`QR Code for Station ${index + 1}`}
+                      className="w-32 h-32"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                      Loading QR...
+                    </div>
+                  )}
                 </div>
                 <div className="text-xs text-gray-500 break-all">
-                  {qrUrl}
+                  {`${window.location.origin}/s/${eventId}/${station.id}`}
                 </div>
               </div>
             );

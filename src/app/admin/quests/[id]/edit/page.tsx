@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import QuestBuilder from '@/components/admin/QuestBuilder'
 
 interface QuestTemplate {
-  id: string
+  id?: string
   name: string
   description: string
   theme: string

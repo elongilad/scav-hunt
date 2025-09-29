@@ -96,35 +96,44 @@ export default function EventSetupPage({ params }: PageProps) {
 
   const loadEventAndStations = async () => {
     try {
-      // Load event details
-      const { data: eventData } = await supabase
-        .from('events')
-        .select(`
-          id,
-          child_name,
-          model_id,
-          status,
-          location,
-          hunt_models (name)
-        `)
-        .eq('id', id)
-        .single()
+      // Use our debug API endpoint to load data (which uses admin client)
+      const response = await fetch(`/api/debug/event/${id}`)
 
-      if (!eventData) throw new Error('Event not found')
-      setEvent(eventData)
+      if (!response.ok) {
+        throw new Error(`Failed to fetch event data: ${response.status}`)
+      }
 
-      // Load model stations
-      const { data: stationsData } = await supabase
-        .from('model_stations')
-        .select('*')
-        .eq('model_id', eventData.model_id)
-        .order('station_id')
+      const debugData = await response.json()
 
-      setStations(stationsData || [])
+      console.log('🔍 API response:', debugData)
+
+      if (!debugData.eventData) {
+        console.error('❌ No event data in API response')
+        throw new Error('Event not found')
+      }
+
+      setEvent(debugData.eventData)
+
+      // Transform stations from the API response
+      const transformedStations = debugData.stationsData?.map((station: any) => {
+        const activity = station.default_activity || {};
+
+        return {
+          id: station.id,
+          station_id: activity.station_id || station.id.split('_').pop() || station.id.replace(/[^0-9]/g, '') || '1',
+          display_name: station.display_name || 'Quest Station',
+          station_type: activity.station_type || station.type || 'activity',
+          activity_description: activity.description || activity.instructions || 'Complete this quest activity',
+          props_needed: activity.props_needed || []
+        };
+      }) || []
+
+      console.log('🔍 Transformed stations:', transformedStations)
+      setStations(transformedStations)
 
       // Initialize mappings
       const initialMappings: Record<string, StationMapping> = {}
-      stationsData?.forEach(station => {
+      transformedStations?.forEach((station: any) => {
         initialMappings[station.station_id] = {
           station_id: station.station_id,
           real_location: '',
@@ -289,8 +298,57 @@ export default function EventSetupPage({ params }: PageProps) {
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-spy-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">טוען הגדרות אירוע...</p>
+          <p className="text-gray-600">Loading event setup...</p>
         </div>
+      </div>
+    )
+  }
+
+  // Debug: Show if no stations are found
+  if (stations.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto space-y-8">
+        <div className="flex items-center gap-4">
+          <Link href={`/dashboard/events/${id}`}>
+            <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </Link>
+
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Quest Setup</h1>
+            <p className="text-gray-600">
+              Set up real locations for {event?.child_name ? `${event.child_name}'s Quest` : 'the quest'}
+            </p>
+          </div>
+        </div>
+
+        <Card className="bg-white border-gray-200 text-gray-900">
+          <CardContent className="p-8 text-center">
+            <AlertCircle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No Quest Stations Found</h2>
+            <p className="text-gray-600 mb-4">
+              This quest model doesn't have any stations configured yet. Stations define the activities and locations for your quest.
+            </p>
+            <p className="text-sm text-gray-500">
+              Event ID: {id}<br/>
+              Model ID: {event?.model_id || 'Not loaded'}<br/>
+              Quest: {event?.hunt_models?.name || event?.child_name || 'Not loaded'}<br/>
+              Event Status: {event?.status || 'Unknown'}<br/>
+              Stations Array Length: {stations?.length || 0}
+            </p>
+
+            {event && (
+              <details className="mt-4 text-left">
+                <summary className="cursor-pointer text-sm text-blue-600">Debug: Raw Event Data</summary>
+                <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+                  {JSON.stringify(event, null, 2)}
+                </pre>
+              </details>
+            )}
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -302,14 +360,14 @@ export default function EventSetupPage({ params }: PageProps) {
         <Link href={`/dashboard/events/${id}`}>
           <Button variant="outline" size="sm" className="bg-white border-gray-300 text-gray-900 hover:bg-gray-50">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            חזור
+            Back
           </Button>
         </Link>
         
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">הגדרת עמדות</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Quest Setup</h1>
           <p className="text-gray-600">
-            הגדר מיקומים ממשיים עבור {event?.child_name ? `ציד של ${event.child_name}` : 'האירוע'}
+            Set up real locations for {event?.child_name ? `${event.child_name}'s Quest` : 'the quest'}
           </p>
         </div>
       </div>
@@ -319,13 +377,13 @@ export default function EventSetupPage({ params }: PageProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="w-5 h-5 text-spy-gold" />
-            התקדמות הגדרת עמדות
+            Station Setup Progress
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-900">התקדמות כללית</span>
+              <span className="text-gray-900">Overall Progress</span>
               <span className="text-spy-gold font-semibold">{getSetupProgress()}%</span>
             </div>
             <Progress value={getSetupProgress()} className="h-2" />
@@ -333,13 +391,13 @@ export default function EventSetupPage({ params }: PageProps) {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">{stations.length}</p>
-                <p className="text-gray-600">סה"כ עמדות</p>
+                <p className="text-gray-600">Total Stations</p>
               </div>
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">
                   {Object.values(mappings).filter(m => m.real_location).length}
                 </p>
-                <p className="text-gray-600">מיקומים מוגדרים</p>
+                <p className="text-gray-600">Locations Set</p>
               </div>
               <div className="text-center">
                 <p className="text-spy-gold font-semibold">
@@ -351,7 +409,7 @@ export default function EventSetupPage({ params }: PageProps) {
                 <p className="text-spy-gold font-semibold">
                   {Object.values(mappings).filter(m => m.media_uploaded).length}
                 </p>
-                <p className="text-gray-600">עם תמונות</p>
+                <p className="text-gray-600">With Photos</p>
               </div>
             </div>
           </div>
@@ -381,7 +439,7 @@ export default function EventSetupPage({ params }: PageProps) {
                       </div>
                       
                       <div>
-                        <h3 className="text-lg font-semibold">עמדה {station.station_id}: {station.display_name}</h3>
+                        <h3 className="text-lg font-semibold">Station {station.station_id}: {station.display_name}</h3>
                         <p className="text-sm text-gray-600">{station.station_type}</p>
                       </div>
                     </CardTitle>
@@ -389,19 +447,19 @@ export default function EventSetupPage({ params }: PageProps) {
                   
                   <Badge variant={isComplete ? "default" : "secondary"} 
                          className={isComplete ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"}>
-                    {isComplete ? 'מוכן' : 'דרוש הגדרה'}
+                    {isComplete ? 'Ready' : 'Needs Setup'}
                   </Badge>
                 </div>
               </CardHeader>
               
               <CardContent className="space-y-6">
                 <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 mb-2">תיאור הפעילות:</p>
+                  <p className="text-sm text-gray-600 mb-2">Activity Description:</p>
                   <p className="text-gray-900">{station.activity_description}</p>
                   
                   {station.props_needed && station.props_needed.length > 0 && (
                     <div className="mt-3">
-                      <p className="text-sm text-gray-600 mb-1">אביזרים נדרשים:</p>
+                      <p className="text-sm text-gray-600 mb-1">Required Props:</p>
                       <ul className="text-sm text-gray-600">
                         {station.props_needed.map((prop, idx) => (
                           <li key={idx}>• {prop}</li>
@@ -417,33 +475,33 @@ export default function EventSetupPage({ params }: PageProps) {
                     <div>
                       <Label className="text-gray-900 flex items-center gap-2">
                         <MapPin className="w-4 h-4 text-spy-gold" />
-                        מיקום בפועל
+                        Real Location
                       </Label>
                       <Input
                         value={mapping.real_location || ''}
                         onChange={(e) => updateMapping(station.station_id, { real_location: e.target.value })}
-                        placeholder="למשל: בחצר האחורית, ליד העץ הגדול..."
+                        placeholder="e.g. In the backyard, next to the big tree..."
                         className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                       />
                     </div>
 
                     <div>
-                      <Label className="text-gray-900">הוראות הגדרה</Label>
+                      <Label className="text-gray-900">Setup Instructions</Label>
                       <Textarea
                         value={mapping.setup_notes || ''}
                         onChange={(e) => updateMapping(station.station_id, { setup_notes: e.target.value })}
-                        placeholder="הוראות מיוחדות להגדרת העמדה..."
+                        placeholder="Special instructions for setting up this station..."
                         className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                         rows={3}
                       />
                     </div>
 
                     <div>
-                      <Label className="text-gray-900">רמז מותאם (אופציונלי)</Label>
+                      <Label className="text-gray-900">Custom Clue (Optional)</Label>
                       <Input
                         value={mapping.custom_clue || ''}
                         onChange={(e) => updateMapping(station.station_id, { custom_clue: e.target.value })}
-                        placeholder="רמז מותאם למיקום הספציפי..."
+                        placeholder="Custom clue for this specific location..."
                         className="bg-white border-gray-200 text-gray-900 placeholder-gray-600"
                       />
                     </div>
@@ -454,7 +512,7 @@ export default function EventSetupPage({ params }: PageProps) {
                     <div>
                       <Label className="text-gray-900 flex items-center gap-2">
                         <Camera className="w-4 h-4 text-spy-gold" />
-                        תמונות המיקום
+                        Location Photos
                       </Label>
                       <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
                         <input
@@ -467,13 +525,13 @@ export default function EventSetupPage({ params }: PageProps) {
                         />
                         <label htmlFor={`photos-${station.station_id}`} className="cursor-pointer">
                           <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" aria-hidden="true" />
-                          <p className="text-gray-600 text-sm">לחץ להעלאת תמונות</p>
+                          <p className="text-gray-600 text-sm">Click to upload photos</p>
                         </label>
                         
                         {mapping.photos && mapping.photos.length > 0 && (
                           <div className="mt-2">
                             <p className="text-green-400 text-sm">
-                              {mapping.photos.length} תמונות נבחרו
+                              {mapping.photos.length} photos selected
                             </p>
                             {Object.entries(uploadProgress)
                               .filter(([key]) => key.startsWith(station.station_id))
@@ -500,12 +558,12 @@ export default function EventSetupPage({ params }: PageProps) {
                         {mapping.qr_generated ? (
                           <>
                             <CheckCircle className="w-4 h-4 mr-2" />
-                            QR Code מוכן
+                            QR Code Ready
                           </>
                         ) : (
                           <>
                             <QrCode className="w-4 h-4 mr-2" />
-                            צור QR Code
+                            Generate QR Code
                           </>
                         )}
                       </Button>
@@ -517,7 +575,7 @@ export default function EventSetupPage({ params }: PageProps) {
                         className="w-full bg-white border-gray-300 text-gray-900 hover:bg-gray-50"
                       >
                         <Save className="w-4 h-4 mr-2" />
-                        שמור הגדרות
+                        Save Settings
                       </Button>
                     </div>
                   </div>
@@ -533,9 +591,9 @@ export default function EventSetupPage({ params }: PageProps) {
         <CardContent className="p-6">
           <div className="flex justify-between items-center">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">סיום הגדרת האירוע</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Complete Event Setup</h3>
               <p className="text-gray-600">
-                לאחר השלמת הגדרת כל העמדות, האירוע יהיה מוכן להפעלה
+                After setting up all stations, the quest will be ready to run
               </p>
             </div>
             
@@ -547,12 +605,12 @@ export default function EventSetupPage({ params }: PageProps) {
               {saving ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  שומר...
+                  Saving...
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-4 h-4 mr-2" />
-                  סיים הגדרה
+                  Complete Setup
                 </>
               )}
             </Button>
@@ -563,7 +621,7 @@ export default function EventSetupPage({ params }: PageProps) {
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-yellow-400" />
                 <p className="text-yellow-400 text-sm">
-                  יש להשלים הגדרת מיקום ו-QR code לכל העמדות לפני סיום ההגדרה
+                  Please complete location and QR code setup for all stations before finishing setup
                 </p>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, org } = await getUserAndOrg()
@@ -13,7 +13,8 @@ export async function GET(
     }
 
     const adminSupabase = createAdminClient()
-    const questId = params.id
+    const resolvedParams = await params
+    const questId = resolvedParams.id
 
     // Get quest details with stations and missions
     const { data: quest, error } = await adminSupabase
@@ -72,7 +73,7 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, org } = await getUserAndOrg()
@@ -81,7 +82,8 @@ export async function PATCH(
     }
 
     const adminSupabase = createAdminClient()
-    const questId = params.id
+    const resolvedParams = await params
+    const questId = resolvedParams.id
     const updates = await req.json()
 
     // Update the quest
@@ -115,7 +117,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { user, org } = await getUserAndOrg()
@@ -124,7 +126,8 @@ export async function DELETE(
     }
 
     const adminSupabase = createAdminClient()
-    const questId = params.id
+    const resolvedParams = await params
+    const questId = resolvedParams.id
 
     // Delete the quest (cascades to stations and missions)
     const { error } = await adminSupabase

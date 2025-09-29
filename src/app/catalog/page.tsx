@@ -7,8 +7,24 @@ import { Clock, Users, Gift } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function CatalogPage() {
-  const user = await requireAuth();
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const supabase = createAdminClient();
+
+  // Check if user is authenticated, but don't require it for viewing catalog
+  let user = null;
+  try {
+    const authModule = await import('@/lib/auth');
+    user = await authModule.getUser();
+    if (user) {
+      console.log('✅ User authenticated:', user.email);
+    }
+  } catch (error) {
+    console.log('❌ Auth error in catalog:', error);
+  }
+
+  if (!user) {
+    console.log('🔑 No user found, showing login buttons');
+  }
 
   const { data: models, error } = await supabase
     .from('hunt_models')
@@ -17,7 +33,9 @@ export default async function CatalogPage() {
     .order('name');
 
   if (error) {
-    console.error('Error loading models:', error);
+    console.error('❌ Error loading models:', error);
+  } else {
+    console.log('✅ Loaded models:', models?.length || 0, 'models');
   }
 
   return (
@@ -56,12 +74,20 @@ export default async function CatalogPage() {
                 </div>
 
                 {/* For MVP, we'll create a simple form that could be enhanced with Stripe */}
-                <form action="/api/checkout/session" method="post" className="mt-4">
-                  <input type="hidden" name="modelId" value={model.id} />
-                  <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                    Buy & Set Up Quest
-                  </Button>
-                </form>
+                {user ? (
+                  <form action="/api/checkout/session" method="post" className="mt-4">
+                    <input type="hidden" name="modelId" value={model.id} />
+                    <Button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                      {isDevelopment ? 'Get Quest (Free Test)' : 'Buy & Set Up Quest'}
+                    </Button>
+                  </form>
+                ) : (
+                  <Link href="/auth/login" className="block mt-4">
+                    <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                      Sign In to Get Quest
+                    </Button>
+                  </Link>
+                )}
 
                 {/* Preview link for development */}
                 <Link href={`/catalog/${model.id}/preview`} className="block">

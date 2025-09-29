@@ -1,42 +1,49 @@
-// Simple QR code generation utility using a canvas-based approach
-// For production, consider using a dedicated QR code library like 'qrcode'
+import QRCode from 'qrcode'
 
-export function generateQRCode(text: string, size: number = 200): string {
-  // For MVP, we'll create a simple placeholder
-  // In production, you would use a proper QR code library
+export interface QRCodeData {
+  eventId: string
+  stationId: string
+  stationName: string
+}
 
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d');
+// Generate QR code as base64 data URL for frontend display
+export async function generateQRCode(text: string, size: number = 300): Promise<string> {
+  try {
+    const qrDataURL = await QRCode.toDataURL(text, {
+      width: size,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      },
+      errorCorrectionLevel: 'M'
+    })
 
-  if (!ctx) {
-    throw new Error('Could not get canvas context');
+    return qrDataURL
+  } catch (error) {
+    console.error('QR Code generation failed:', error)
+    throw new Error('Failed to generate QR code')
   }
+}
 
-  // Simple placeholder pattern - in production use a real QR code library
-  ctx.fillStyle = '#000';
-  ctx.fillRect(0, 0, size, size);
+// Generate QR code as PNG buffer (for downloads)
+export async function generateQRCodeBuffer(text: string, size: number = 300): Promise<Buffer> {
+  try {
+    const buffer = await QRCode.toBuffer(text, {
+      width: size,
+      margin: 2,
+      color: {
+        dark: '#000000',
+        light: '#FFFFFF'
+      },
+      errorCorrectionLevel: 'M'
+    })
 
-  ctx.fillStyle = '#fff';
-  ctx.fillRect(10, 10, size - 20, size - 20);
-
-  ctx.fillStyle = '#000';
-  ctx.font = '10px monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('QR CODE', size / 2, size / 2 - 10);
-  ctx.fillText('(MVP PLACEHOLDER)', size / 2, size / 2 + 5);
-
-  // Add some pattern to make it look QR-like
-  for (let i = 0; i < size; i += 20) {
-    for (let j = 0; j < size; j += 20) {
-      if ((i + j) % 40 === 0) {
-        ctx.fillRect(i, j, 10, 10);
-      }
-    }
+    return buffer
+  } catch (error) {
+    console.error('QR Code generation failed:', error)
+    throw new Error('Failed to generate QR code')
   }
-
-  return canvas.toDataURL();
 }
 
 // Helper to get the scan URL for a station
@@ -45,6 +52,30 @@ export function getStationScanUrl(eventId: string, stationId: string): string {
     return `${window.location.origin}/s/${eventId}/${stationId}`;
   }
   return `/s/${eventId}/${stationId}`;
+}
+
+// Generate QR codes for all stations in an event
+export async function generateEventQRCodes(eventId: string, stations: any[]): Promise<Array<{
+  stationId: string
+  stationName: string
+  qrCodeDataURL: string
+  scanURL: string
+}>> {
+  const qrCodes = []
+
+  for (const station of stations) {
+    const scanURL = getStationScanUrl(eventId, station.id)
+    const qrCodeDataURL = await generateQRCode(scanURL)
+
+    qrCodes.push({
+      stationId: station.id,
+      stationName: station.display_name,
+      qrCodeDataURL,
+      scanURL
+    })
+  }
+
+  return qrCodes
 }
 
 // Helper to generate team-specific route data

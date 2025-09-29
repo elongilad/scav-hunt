@@ -27,12 +27,12 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-4xl font-bold text-brand-navy font-display mb-2">
-            🗺️ {language === 'he' ? 'מרכז בקרה' : 'Quest Control'}
+            🎉 {language === 'he' ? 'האירועים שלי' : 'My Events'}
           </h1>
           <p className="text-gray-600">
             {language === 'he'
-              ? `ברוך הבא, ${user.email?.split('@')[0]}`
-              : `Welcome back, ${user.email?.split('@')[0]}`
+              ? `ברוך הבא, ${user.email?.split('@')[0]} - נהל את ההרפתקאות שרכשת`
+              : `Welcome back, ${user.email?.split('@')[0]} - manage your purchased adventures`
             }
           </p>
         </div>
@@ -64,26 +64,14 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg">
-          <div className="flex items-center">
-            <Users className="w-8 h-8 text-brand-teal mr-3" />
-            <div>
-              <p className="text-2xl font-bold text-brand-navy">{orgs.length}</p>
-              <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'ארגונים' : 'Organizations'}
-              </p>
-            </div>
-          </div>
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg">
           <div className="flex items-center">
             <MapPin className="w-8 h-8 text-brand-teal mr-3" />
             <div>
               <p className="text-2xl font-bold text-brand-navy">{events?.length || 0}</p>
               <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'אירועים אחרונים' : 'Recent Events'}
+                {language === 'he' ? 'אירועים שרכשתי' : 'Purchased Events'}
               </p>
             </div>
           </div>
@@ -91,25 +79,27 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
 
         <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg">
           <div className="flex items-center">
-            <Video className="w-8 h-8 text-brand-teal mr-3" />
-            <div>
-              <p className="text-2xl font-bold text-brand-navy">-</p>
-              <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'סרטונים קומפילד' : 'Videos Compiled'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg">
-          <div className="flex items-center">
-            <Settings className="w-8 h-8 text-brand-teal mr-3" />
+            <Users className="w-8 h-8 text-brand-teal mr-3" />
             <div>
               <p className="text-2xl font-bold text-brand-navy">
-                {language === 'he' ? 'פעיל' : 'Active'}
+                {events?.filter(e => e.status === 'active' || e.status === 'completed').length || 0}
               </p>
               <p className="text-gray-600 text-sm">
-                {language === 'he' ? 'סטטוס מערכת' : 'System Status'}
+                {language === 'he' ? 'הרפתקאות שהופעלו' : 'Adventures Launched'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg">
+          <div className="flex items-center">
+            <Package className="w-8 h-8 text-brand-teal mr-3" />
+            <div>
+              <p className="text-2xl font-bold text-brand-navy">
+                {language === 'he' ? 'זמין' : 'Available'}
+              </p>
+              <p className="text-gray-600 text-sm">
+                {language === 'he' ? 'קטלוג הרפתקאות' : 'Quest Catalog'}
               </p>
             </div>
           </div>
@@ -120,7 +110,7 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
       <div className="bg-white/70 backdrop-blur-lg rounded-lg p-6 border border-brand-teal/20 shadow-lg mb-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-brand-navy">
-            {language === 'he' ? 'אירועים אחרונים' : 'Recent Events'}
+            {language === 'he' ? 'ההרפתקאות שלי' : 'My Adventures'}
           </h2>
           <Link href="/dashboard/events">
             <Button variant="ghost" className="text-brand-teal hover:text-brand-teal/80">
@@ -182,14 +172,14 @@ export function DashboardPageClient({ user, orgs, events }: DashboardPageClientP
             </h3>
             <p className="text-gray-500 mb-6">
               {language === 'he'
-                ? 'צור את הרפתקת הבחירה הראשונה שלך כדי להתחיל'
-                : 'Create your first quest adventure to get started'
+                ? 'רכשו את ההרפתקה הראשונה שלכם מהקטלוג שלנו'
+                : 'Purchase your first adventure from our catalog'
               }
             </p>
-            <Link href="/dashboard/events/new">
+            <Link href="/catalog">
               <Button className="bg-brand-teal hover:bg-brand-teal/90 text-white font-semibold">
-                <Plus className="w-4 h-4 mr-2" />
-                {language === 'he' ? 'צור קווסט ראשון' : 'Create First Quest'}
+                <Package className="w-4 h-4 mr-2" />
+                {language === 'he' ? 'עיינו בקטלוג' : 'Browse Catalog'}
               </Button>
             </Link>
           </div>
