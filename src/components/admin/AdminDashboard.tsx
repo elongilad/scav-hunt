@@ -91,18 +91,80 @@ export default function AdminDashboard({ stats, huntModels }: AdminDashboardProp
         </Card>
       </div>
 
+      {/* Quest Management Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link href="/admin/quests">
+          <Card className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-all cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Map className="h-6 w-6 text-brand-teal" />
+                Quest Templates
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Create and manage professional quest templates for your marketplace
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="text-2xl font-bold text-brand-teal">{stats.huntModels}</div>
+                <div className="text-sm text-gray-400">Templates</div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/admin/models">
+          <Card className="bg-white/10 border-white/20 text-white hover:bg-white/15 transition-all cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Video className="h-6 w-6 text-brand-teal" />
+                Legacy Models
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                View and manage legacy hunt models (deprecated)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="text-2xl font-bold text-brand-teal">{stats.activeModels}</div>
+                <div className="text-sm text-gray-400">Active</div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/admin/quests/new">
+          <Card className="bg-brand-teal/20 border-brand-teal/30 text-white hover:bg-brand-teal/25 transition-all cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Plus className="h-6 w-6 text-brand-teal" />
+                Create New Quest
+              </CardTitle>
+              <CardDescription className="text-gray-300">
+                Build a new quest template with guided setup
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-center">
+                <div className="text-4xl text-brand-teal">+</div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
+
+      {/* Recent Quest Templates */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-white">{t('admin.recent_models', language)}</h2>
-        <Link href="/admin/models/new">
-          <Button className="flex items-center gap-2 bg-brand-teal hover:bg-brand-teal/90 text-white">
-            <Plus className="h-4 w-4" />
-            {t('admin.new_model', language)}
+        <h2 className="text-lg font-semibold text-white">Recent Quest Templates</h2>
+        <Link href="/admin/quests">
+          <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+            View All Quests
           </Button>
         </Link>
       </div>
 
       <div className="space-y-4">
-        {huntModels?.slice(0, 5).map((model) => (
+        {huntModels?.slice(0, 3).map((model) => (
           <div
             key={model.id}
             className="flex justify-between items-center p-4 bg-white/5 rounded-lg border border-white/10"
@@ -114,26 +176,45 @@ export default function AdminDashboard({ stats, huntModels }: AdminDashboardProp
                   variant={model.active ? 'default' : 'secondary'}
                   className={model.active ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-500/20 text-gray-400 border-gray-500/30'}
                 >
-                  {model.active ? t('admin.ready', language) : t('admin.draft', language)}
+                  {model.active ? 'Active' : 'Draft'}
                 </Badge>
               </div>
               {model.description && (
                 <p className="text-gray-400 text-sm">{model.description}</p>
               )}
               <p className="text-gray-500 text-xs mt-1">
-                {t('admin.created_on', language)} {new Date(model.created_at).toLocaleDateString(language === 'he' ? 'he-IL' : 'en-US')}
+                Created {new Date(model.created_at).toLocaleDateString()}
               </p>
             </div>
 
             <div className="flex items-center gap-2">
-              <Link href={`/admin/models/${model.id}`}>
+              <Link href={`/admin/quests/${model.id}`}>
                 <Button size="sm" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                  {t('admin.edit', language)}
+                  View
+                </Button>
+              </Link>
+              <Link href={`/admin/quests/${model.id}/edit`}>
+                <Button size="sm" className="bg-brand-teal hover:bg-brand-teal/90">
+                  Edit
                 </Button>
               </Link>
             </div>
           </div>
         ))}
+
+        {(!huntModels || huntModels.length === 0) && (
+          <div className="text-center py-12 text-gray-400">
+            <Map className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <h3 className="text-xl font-medium mb-2">No quest templates yet</h3>
+            <p className="mb-6">Create your first quest template to start building amazing scavenger hunt experiences.</p>
+            <Link href="/admin/quests/new">
+              <Button className="bg-brand-teal hover:bg-brand-teal/90">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Quest
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )
