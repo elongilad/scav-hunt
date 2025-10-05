@@ -152,12 +152,12 @@ export default function QuestTemplates() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button href={`/catalog/${template.id}`} className="flex-1">
-                    {language === 'he' ? 'רכישה מהירה' : 'Quick Buy'}
+                  <Button href="/catalog" className="flex-1">
+                    {language === 'he' ? 'עיין בקטלוג' : 'Browse Catalog'}
                   </Button>
                   <Button
                     variant="secondary"
-                    href={`/catalog/${template.id}?preview=true`}
+                    href="/demo"
                     className="px-4"
                   >
                     {language === 'he' ? 'תצוגה מקדימה' : 'Preview'}
