@@ -225,7 +225,7 @@ export default function LoginPage() {
                 variant="outline"
                 onClick={handleGoogleSignIn}
                 className={`
-                  w-full bg-white/70 border-brand-teal/20 text-gray-900 hover:bg-white/90 h-12
+                  w-full bg-white/70 border-brand-teal/20 !text-gray-900 hover:bg-white/90 h-12
                   ${isRTL ? 'flex-row-reverse' : 'flex-row'}
                 `}
               >

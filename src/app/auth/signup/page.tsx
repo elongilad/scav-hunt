@@ -259,7 +259,7 @@ export default function SignUpPage() {
                 type="button"
                 variant="outline"
                 onClick={handleGoogleSignUp}
-                className="w-full bg-white/70 border-brand-teal/20 text-gray-900 hover:bg-white/90 h-12"
+                className="w-full bg-white/70 border-brand-teal/20 !text-gray-900 hover:bg-white/90 h-12"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
