@@ -11,7 +11,6 @@ import Hero from "./sections/Hero";
 import QuestTemplates from "./sections/QuestTemplates";
 import Features from "./sections/Features";
 import HowItWorks from "./sections/HowItWorks";
-import Pricing from "./sections/Pricing";
 
 export function HomePage() {
   const { language } = useLanguage();
@@ -50,7 +49,6 @@ export function HomePage() {
         <QuestTemplates />
         <HowItWorks />
         <Features />
-        <Pricing />
 
         {/* FINAL CTA */}
         <section className="py-16 bg-brand-navy text-white text-center">

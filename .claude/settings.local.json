@@ -16,7 +16,10 @@
       "Bash(find:*)",
       "Bash(npm run build:*)",
       "Bash(node:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(rm:*)",
+      "Bash(npm run typecheck:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

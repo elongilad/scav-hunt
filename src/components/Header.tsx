@@ -31,9 +31,6 @@ export function Header() {
           <Link href="/demo" className="hover:text-brand-navy">
             {language === 'he' ? 'הדגמה' : 'Demo'}
           </Link>
-          <Link href="/pricing" className="hover:text-brand-navy">
-            {language === 'he' ? 'תמחור' : 'Pricing'}
-          </Link>
           <Link href="/contact" className="hover:text-brand-navy">
             {language === 'he' ? 'צור קשר' : 'Contact'}
           </Link>

@@ -32,7 +32,6 @@ export function Footer() {
           </h4>
           <ul className="space-y-1 text-sm text-slate-700">
             <li><Link href="/#features">{language === 'he' ? 'תכונות' : 'Features'}</Link></li>
-            <li><Link href="/pricing">{language === 'he' ? 'תמחור' : 'Pricing'}</Link></li>
             <li><Link href="/demo">{language === 'he' ? 'הדגמה' : 'Demo'}</Link></li>
           </ul>
         </div>

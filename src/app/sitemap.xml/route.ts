@@ -17,12 +17,6 @@ export async function GET() {
       lastmod: new Date().toISOString().split('T')[0]
     },
     {
-      url: '/pricing',
-      changefreq: 'monthly',
-      priority: '0.8',
-      lastmod: new Date().toISOString().split('T')[0]
-    },
-    {
       url: '/contact',
       changefreq: 'monthly',
       priority: '0.6',
