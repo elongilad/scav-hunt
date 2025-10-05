@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 // Language functionality removed for static generation
 // import { useLanguage, useRTL } from '@/components/LanguageProvider'
@@ -18,6 +18,8 @@ export default function LoginPage() {
   const [message, setMessage] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const templateId = searchParams?.get('template')
   const supabase = createClient()
   // Hardcoded for static generation
   const isRTL = false
@@ -35,7 +37,13 @@ export default function LoginPage() {
       })
 
       if (error) throw error
-      router.push('/dashboard')
+
+      // If login successful and template ID exists, redirect to purchase flow
+      if (templateId) {
+        router.push(`/purchase?template=${templateId}`)
+      } else {
+        router.push('/dashboard')
+      }
     } catch (error: any) {
       console.error('Auth error:', error)
 
@@ -58,9 +66,13 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     try {
-      const redirectUrl = process.env.NEXT_PUBLIC_APP_URL
+      const baseRedirectUrl = process.env.NEXT_PUBLIC_APP_URL
         ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
         : `${window.location.origin}/auth/callback`
+
+      const redirectUrl = templateId
+        ? `${baseRedirectUrl}?template=${templateId}`
+        : baseRedirectUrl
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -242,7 +254,7 @@ export default function LoginPage() {
             {/* Link to Sign Up */}
             <div className="text-center">
               <Link
-                href="/auth/signup"
+                href={templateId ? `/auth/signup?template=${templateId}` : '/auth/signup'}
                 className="text-brand-teal hover:text-brand-teal/80 text-sm"
               >
                 Don't have an account? Create one

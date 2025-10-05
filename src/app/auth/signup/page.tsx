@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { signUpWithEmail } from '@/app/auth/actions'
 import { Eye, EyeOff, Mail, Lock, Loader2, ArrowLeft, X, User } from 'lucide-react'
 import Link from 'next/link'
@@ -19,6 +19,8 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const templateId = searchParams?.get('template')
   const supabase = createClient()
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -44,7 +46,13 @@ export default function SignUpPage() {
       if (!result.success) {
         throw new Error(result.message)
       }
-      setMessage(result.message)
+
+      // If signup successful and template ID exists, redirect to purchase flow
+      if (templateId) {
+        router.push(`/purchase?template=${templateId}`)
+      } else {
+        setMessage(result.message)
+      }
     } catch (error: any) {
       console.error('Signup error:', error)
 
@@ -63,9 +71,13 @@ export default function SignUpPage() {
   }
 
   const handleGoogleSignUp = async () => {
-    const redirectUrl = process.env.NEXT_PUBLIC_APP_URL
+    const baseRedirectUrl = process.env.NEXT_PUBLIC_APP_URL
       ? `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
       : `${window.location.origin}/auth/callback`
+
+    const redirectUrl = templateId
+      ? `${baseRedirectUrl}?template=${templateId}`
+      : baseRedirectUrl
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

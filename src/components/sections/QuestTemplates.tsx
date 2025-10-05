@@ -152,7 +152,7 @@ export default function QuestTemplates() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button href="/auth/signup" className="flex-1">
+                  <Button href={`/auth/signup?template=${template.id}`} className="flex-1">
                     {language === 'he' ? 'רכישה עכשיו' : 'Purchase Now'}
                   </Button>
                   <Button
