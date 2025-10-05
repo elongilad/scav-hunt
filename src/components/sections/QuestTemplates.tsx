@@ -152,8 +152,8 @@ export default function QuestTemplates() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button href="/catalog" className="flex-1">
-                    {language === 'he' ? 'עיין בקטלוג' : 'Browse Catalog'}
+                  <Button href="/auth/signup" className="flex-1">
+                    {language === 'he' ? 'רכישה עכשיו' : 'Purchase Now'}
                   </Button>
                   <Button
                     variant="secondary"
